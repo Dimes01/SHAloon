@@ -5,9 +5,6 @@ Cryptoprovider::Cryptoprovider() {
 
 }
 
-// Вызов этого метода подразумевает пересканирование сертификатов
-// поскольку за ним обязательно последует ряд вызовов GetNextCertificate
-// для получения всех остальных сертификатов
 Certificate* Cryptoprovider::GetFirstCertificate() {
     refillCertificates();
     mCertificatesIterator = mCertificates.begin();
@@ -18,4 +15,10 @@ Certificate* Cryptoprovider::GetNextCertificate() {
     ++mCertificatesIterator;
     if (mCertificatesIterator == mCertificates.end()) return nullptr;
     return *mCertificatesIterator;
+}
+
+Cryptoprovider::~Cryptoprovider() {
+    for (auto& certificate : mCertificates) {
+        if (certificate != nullptr) delete certificate;
+    }
 }
