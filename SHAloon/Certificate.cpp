@@ -11,3 +11,5 @@ void Certificate::SetSubject(const std::string& _subject) {
 std::string Certificate::GetSubject() {
     return mSubject;
 }
+
+// что-то
