@@ -1,7 +1,7 @@
 LIBRARY "SHAloon"
 
 EXPORTS
-Certificate_Constructor
-Certificate_Set_subject
-Certificate_Get_subject
-test_string
+InitShaloon
+GetFirstCertificate
+GetNextCertificate
+SignDocument
