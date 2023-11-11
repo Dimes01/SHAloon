@@ -21,12 +21,42 @@
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Certificate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaloonLibrary.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Cryptoprovider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CryptoProCSP.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ViPNetCSP.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Certificate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaloonLibrary.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Cryptoprovider.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CryptoProCSP.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ViPNetCSP.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
