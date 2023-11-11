@@ -5,13 +5,13 @@
 class Certificate
 {
 private:
-    std::string subject;
-    std::string public_key;
+    std::string mSubject;
+    std::string mPublicKey;
 
 public:
-    Certificate(const std::string& _subject, const std::string& _public_key);
+    Certificate(const std::string& subject, const std::string& publicKey);
 
-    void SetSubject(const std::string& _subject);
+    void SetSubject(const std::string& subject);
     std::string GetSubject();
 };
 
