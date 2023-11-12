@@ -8,6 +8,7 @@ Cryptoprovider::Cryptoprovider() {
 Certificate* Cryptoprovider::GetFirstCertificate() {
 	refillCertificates();
 	mCertificatesIterator = mCertificates.begin();
+	if (mCertificatesIterator == mCertificates.end()) return nullptr;
 	return *mCertificatesIterator;
 }
 

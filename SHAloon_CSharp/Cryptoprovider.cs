@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
 namespace SHAloon_CSharp
 {
@@ -14,29 +13,41 @@ namespace SHAloon_CSharp
 		#region Импортируемые функции
 
 		[DllImport(path_to_dll_cryptoprovider, CallingConvention = CallingConvention.Cdecl)]
+		private static extern void InitShaloon();
+
+		[DllImport(path_to_dll_cryptoprovider, CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr GetFirstCertificate();
 
 
         [DllImport(path_to_dll_cryptoprovider, CallingConvention = CallingConvention.Cdecl)]
-        private static extern IntPtr GetLNextCertificate();
+        private static extern IntPtr GetNextCertificate();
 
 		#endregion
 		#region Конструкторы
 
 		public Cryptoprovider() {
+			initShaloon();
 			getAllCertificates();
 		}
 
         #endregion
         #region Методы
 
+		private void initShaloon() {
+			InitShaloon();
+		}
+
         private void getAllCertificates() {
-			var certificate = (Certificate)Marshal.PtrToStructure(GetFirstCertificate(), typeof(Certificate));
-			if (certificate == null) return;
+			var ptr = GetFirstCertificate();
+			if (ptr == IntPtr.Zero) return;
+
+
+			if (Marshal.PtrToStructure<Certificate>(ptr) is not Certificate certificate) return;
 			Certificates.Add(certificate);
-            while (certificate != null) {
-                certificate = (Certificate)Marshal.PtrToStructure(GetLNextCertificate(), typeof(Certificate));
-				Certificates.Add(certificate);
+
+            while ((ptr = GetNextCertificate()) != IntPtr.Zero) {
+				if (Marshal.PtrToStructure<Certificate>(ptr) is not Certificate nextCertificate) return;
+				Certificates.Add(nextCertificate);
             }
         }
 
