@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "Logger.h"
 
-Logger::Logger(bool success, const std::string& summary, const std::string& message, LogLevel logLevel) 
-    : mSummary(summary), mMessage(message), mSuccess(success) {
+Logger::Logger(bool success, const std::string& source, const std::string& summary, const std::string& message, LogLevel logLevel)
+        : mSource(source), mSummary(summary), mMessage(message), mSuccess(success) {
     auto const currentLocalTime = std::chrono::current_zone()->to_local(std::chrono::system_clock::now());
     mTime = std::format(LogTimeFormat, currentLocalTime);
     mLogLevel = toString(logLevel);
@@ -16,6 +16,10 @@ std::string Logger::toString(const LogLevel& logLevel) {
         case LogLevel::LOG_INFO:  return "INFO";
         default: return "INFO";
     }
+}
+
+std::string Logger::GetLogSource() {
+    return mSource;
 }
 
 std::string Logger::GetLogSummary() {
@@ -38,7 +42,8 @@ bool Logger::GetLogSuccess() {
     return mSuccess;
 }
 
-void Logger::Log(Logger* logger, bool success, const std::string& summary, const std::string& message, LogLevel logLevel) {
+void Logger::Log(Logger* logger, bool success, const std::string& source, const std::string& summary,
+        const std::string& message, LogLevel logLevel) {
     if (logger != nullptr) delete logger;
-    logger = new Logger(success, summary, message, logLevel);
+    logger = new Logger(success, source, summary, message, logLevel);
 }

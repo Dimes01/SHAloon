@@ -29,40 +29,33 @@ void SignDocument(Certificate* certificate, const char* absoluteFilePath) {
     */
 
     // Временный пример использования логгера
-    Logger::Log(logger, true, "", "", LogLevel::LOG_INFO);
+    Logger::Log(logger, false, "КриптоПро CSP", "Ошибка при создании подписи", "Ошибка #519: тыры-пыры", LogLevel::LOG_ERROR);
 }
 
 
+const char* GetLogSource() {
+    std::string source = logger->GetLogSource();
+    return ShaloonUtils::ToConstCharArray(source);
+}
+
 const char* GetLogSummary() {
     std::string summary = logger->GetLogSummary();
-    size_t size = summary.size() + 1;
-    char* result = new char[size];
-    strcpy_s(result, size, summary.c_str());
-    return result;
+    return ShaloonUtils::ToConstCharArray(summary);
 }
 
 const char* GetLogMessage() {
     std::string message = logger->GetLogMessage();
-    size_t size = message.size() + 1;
-    char* result = new char[size];
-    strcpy_s(result, size, message.c_str());
-    return result;
+    return ShaloonUtils::ToConstCharArray(message);
 }
 
 const char* GetLogTime() {
     std::string time = logger->GetLogTime();
-    size_t size = time.size() + 1;
-    char* result = new char[size];
-    strcpy_s(result, size, time.c_str());
-    return result;
+    return ShaloonUtils::ToConstCharArray(time);
 }
 
 const char* GetLogLevel() {
     std::string logLevel = logger->GetLogLevel();
-    size_t size = logLevel.size() + 1;
-    char* result = new char[size];
-    strcpy_s(result, size, logLevel.c_str());
-    return result;
+    return ShaloonUtils::ToConstCharArray(logLevel);
 }
 
 bool GetLogSuccess() {
