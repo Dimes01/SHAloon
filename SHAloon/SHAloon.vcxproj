@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)\SHAloon_CSharp\bin\$(Configuration)\net7.0</OutDir>
+    <OutDir>$(SolutionDir)\SHAloon_CSharp\bin\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)\SHAloon_CSharp\bin\$(Configuration)\net7.0</OutDir>
