@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ShaloonUtils.h"
 #include "Cryptoprovider.h"
 #include "CryptoProCSP.h"
 #include "ViPNetCSP.h"
@@ -16,6 +17,7 @@ extern "C" {
     SHALOONAPI Certificate* GetNextCertificate();
     SHALOONAPI void SignDocument(Certificate* certificate, const char* absoluteFilePath);
 
+    SHALOONAPI const char* GetLogSource();
     SHALOONAPI const char* GetLogSummary();
     SHALOONAPI const char* GetLogMessage();
     SHALOONAPI const char* GetLogTime();

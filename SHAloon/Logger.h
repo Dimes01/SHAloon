@@ -16,6 +16,7 @@ constexpr auto LogTimeFormat = "{:%Y-%m-%d %X}";
 
 class Logger {
 private:
+    std::string mSource;
     std::string mSummary;
     std::string mMessage;
     std::string mTime;
@@ -25,14 +26,16 @@ private:
     std::string toString(const LogLevel& logLevel);
 
 public:
-    Logger(bool success, const std::string& summary, const std::string& message, LogLevel logLevel);
+    Logger(bool success, const std::string& source, const std::string& summary, const std::string& message, LogLevel logLevel);
 
+    std::string GetLogSource();
     std::string GetLogSummary();
     std::string GetLogMessage();
     std::string GetLogTime();
     std::string GetLogLevel();
     bool GetLogSuccess();
 
-    static void Log(Logger* logger, bool success, const std::string& summary, const std::string& message, LogLevel logLevel);
+    static void Log(Logger* logger, bool success, const std::string& source, const std::string& summary, 
+        const std::string& message, LogLevel logLevel);
 };
 
