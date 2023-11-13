@@ -13,13 +13,13 @@ Certificate* Cryptoprovider::GetFirstCertificate() {
 }
 
 Certificate* Cryptoprovider::GetNextCertificate() {
-	++mCertificatesIterator;
-	if (mCertificatesIterator == mCertificates.end()) return nullptr;
-	return *mCertificatesIterator;
+    ++mCertificatesIterator;
+    if (mCertificatesIterator == mCertificates.end()) return nullptr;
+    return *mCertificatesIterator;
 }
 
 Cryptoprovider::~Cryptoprovider() {
-	for (auto& certificate : mCertificates) {
-		if (certificate != nullptr) delete certificate;
-	}
+    for (auto& certificate : mCertificates) {
+        if (certificate != nullptr) delete certificate;
+    }
 }

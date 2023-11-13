@@ -23,8 +23,6 @@ public:
     // или nullptr, если достигнут конец списка
     Certificate* GetNextCertificate();
 
-    virtual void SignDocument(Certificate* certificate, const std::string& absoluteFilePath) = 0;
-
     virtual ~Cryptoprovider();
 };
 
