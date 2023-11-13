@@ -5,3 +5,9 @@ InitShaloon
 GetFirstCertificate
 GetNextCertificate
 SignDocument
+GetLogSource
+GetLogSummary
+GetLogMessage
+GetLogTime
+GetLogLevel
+GetLogSuccess
