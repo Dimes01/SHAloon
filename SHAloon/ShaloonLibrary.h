@@ -15,7 +15,8 @@ extern "C" {
     SHALOONAPI void InitShaloon();
     SHALOONAPI Certificate* GetFirstCertificate();
     SHALOONAPI Certificate* GetNextCertificate();
-    SHALOONAPI void SignDocument(Certificate* certificate, const char* absoluteFilePath);
+    SHALOONAPI void SignDocument(Certificate* certificate, 
+        const char* absoluteFilePath, const char* absoluteSignaturePath);
 
     SHALOONAPI const char* GetLogSource();
     SHALOONAPI const char* GetLogSummary();

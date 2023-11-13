@@ -27,7 +27,7 @@ namespace SHAloon_CSharp
 
 		public Cryptoprovider() {
 			initShaloon();
-			getAllCertificates();
+			//getAllCertificates();
 		}
 
         #endregion
