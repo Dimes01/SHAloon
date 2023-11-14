@@ -8,5 +8,5 @@ if (certificates.Count == 0) {
     return;
 }
 
-Console.WriteLine($"Владелец: {certificates[0].SubjectName}");
-Console.WriteLine($"Ключ: {certificates[0].PublicKey}");
+//Console.WriteLine($"Владелец: {certificates[0].SubjectName}");
+//Console.WriteLine($"Ключ: {certificates[0].PublicKey}");

@@ -9,5 +9,14 @@
 
 // add headers that you want to pre-compile here
 #include "framework.h"
+#include <string>
+#include <list>
+#include <sstream>
+#include <tchar.h>
+#include <iomanip>
+#include <wincrypt.h>
+#include <chrono>
+#include <format>
+#include <iostream>
 
 #endif //PCH_H

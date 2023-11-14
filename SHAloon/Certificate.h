@@ -1,18 +1,26 @@
 #pragma once
 
-#include <string>
-#include <wincrypt.h>
-
 class Certificate
 {
 private:
     std::string mSubject;
-    std::string mPublicKey;
+    std::string mIssuer;
+    std::string mSerialNumber;
+    std::string mNotAfter;
 
 public:
-    Certificate(const std::string& subject, const std::string& publicKey);
+    Certificate();
 
     void SetSubject(const std::string& subject);
     std::string GetSubject();
+
+    void SetIssuer(const std::string& issuer);
+    std::string GetIssuer();
+
+    void SetSerialNumber(const std::string& serialNumber);
+    std::string GetSerialNumber();
+
+    void SetNotAfter(const std::string& notAfter);
+    std::string GetNotAfter();
 };
 

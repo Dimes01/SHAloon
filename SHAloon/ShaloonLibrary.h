@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ShaloonUtils.h"
-#include "Cryptoprovider.h"
 #include "CryptoProCSP.h"
 #include "ViPNetCSP.h"
 #include "CertificateStorage.h"

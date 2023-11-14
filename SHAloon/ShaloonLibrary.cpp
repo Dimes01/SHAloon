@@ -17,7 +17,7 @@ void InitShaloon() {
 }
 
 Certificate* GetFirstCertificate() {
-    return certStorage->CertGetFirst();
+    return certStorage->GetFirstCertificate();
 }
 
 Certificate* GetNextCertificate() {

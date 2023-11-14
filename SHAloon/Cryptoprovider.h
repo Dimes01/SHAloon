@@ -1,16 +1,12 @@
 #pragma once
 
 #include "Certificate.h"
-#include <iostream>
-#include <wincrypt.h>
-#include <tchar.h>
-#include <list>
 
 class Cryptoprovider {
 protected:
     bool mInitialized = false;
 
-    HCRYPTPROV mHCryptProv = 0;
+    HCRYPTPROV hCryptProv = 0;
 
 public:
     Cryptoprovider();

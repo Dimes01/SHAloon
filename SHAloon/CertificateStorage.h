@@ -1,30 +1,29 @@
 #pragma once
-#include <string>
-#include <list>
-#include <sstream>
-#include <wincrypt.h>
+
 #include "Certificate.h"
+#include "ShaloonUtils.h"
+
 
 class CertificateStorage {
 private:
-	HCERTSTORE hMemoryStore;
-	PCCERT_CONTEXT pDesiredCert = NULL;	// Установить в NULL для первого обращения к функции CertFindCertificateInStore
+	const unsigned int certificateEncodingType = PKCS_7_ASN_ENCODING | X509_ASN_ENCODING;
+
+	HCERTSTORE hCertStore = NULL;
 
 	std::list<Certificate*> mCertificates;
 	std::list<Certificate*>::iterator mCertificatesIterator;
 
 	// Пересканирование сертификатов
 	// Если список не пуст, очистить список
-	virtual void refillCertificates() = 0;
+	void refillCertificates();
 
-	void CertFindFirstInMemoryStorage();
-	void MakeCertificateInfo(PCERT_INFO pDesiredCertInfo);
+	void parseCertificateInfo(PCCERT_CONTEXT context);
 
 public:
 	CertificateStorage();
 	// Вызов этого метода подразумевает пересканирование сертификатов, поскольку
 	// предполагается, что список сертификатов всегда должен быть актуальным
-	Certificate* CertGetFirst();
+	Certificate* GetFirstCertificate();
 
 	// Возвращает следующий сертификат из итератора
 	// или nullptr, если достигнут конец списка
