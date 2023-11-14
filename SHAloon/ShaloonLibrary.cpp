@@ -2,13 +2,18 @@
 #include "ShaloonLibrary.h"
 
 void InitShaloon() {
-    /*
-    TODO:
-        1. Определить, какой криптопровайдер сейчас используется
-        2. На основании результата шага 1 инициализировать объект "cryptoprovider"
-    */
-
-    cryptoprovider = new CryptoProCSP(); // Заглушка
+    cryptoprovider = new CryptoProCSP();
+    if (cryptoprovider->IsInitialized()) {
+        std::cout << "CryptoPro is working here!\n";
+        return;
+    } 
+    
+    delete cryptoprovider;
+    cryptoprovider = new ViPNetCSP();
+    if (cryptoprovider->IsInitialized()) {
+        std::cout << "ViPNet is working here!\n";
+        return;
+    }
 }
 
 Certificate* GetFirstCertificate() {
@@ -19,7 +24,9 @@ Certificate* GetNextCertificate() {
     return cryptoprovider->GetNextCertificate();
 }
 
-void SignDocument(Certificate* certificate, const char* absoluteFilePath) {
+void SignDocument(Certificate* certificate, 
+                  const char* absoluteFilePath,
+                  const char* absoluteSignaturePath) {
     /*
     TODO:
         1. Проверить документ на существование

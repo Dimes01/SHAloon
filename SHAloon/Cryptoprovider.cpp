@@ -2,7 +2,11 @@
 #include "Cryptoprovider.h"
 
 Cryptoprovider::Cryptoprovider() {
+	
+}
 
+bool Cryptoprovider::IsInitialized() {
+	return mInitialized;
 }
 
 Certificate* Cryptoprovider::GetFirstCertificate() {
