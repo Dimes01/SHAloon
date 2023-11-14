@@ -4,11 +4,13 @@
 #include "Cryptoprovider.h"
 #include "CryptoProCSP.h"
 #include "ViPNetCSP.h"
+#include "CertificateStorage.h"
 #include "Logger.h"
 
 #define SHALOONAPI __declspec(dllexport)
 
 Cryptoprovider* cryptoprovider;
+CertificateStorage* certStorage;
 Logger* logger;
 
 extern "C" {

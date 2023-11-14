@@ -12,10 +12,6 @@ CryptoProCSP::CryptoProCSP() : Cryptoprovider() {
     }
 }
 
-void CryptoProCSP::refillCertificates() {
-
-}
-
 void CryptoProCSP::SignDocument(Certificate* certificate,
                                 const std::string& absoluteFilePath, 
                                 const std::string& absoluteSignaturePath) {

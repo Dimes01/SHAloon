@@ -5,7 +5,6 @@
 
 class CryptoProCSP : public Cryptoprovider {
 protected:
-    virtual void refillCertificates() override;
 
 public:
     CryptoProCSP();

@@ -17,11 +17,11 @@ void InitShaloon() {
 }
 
 Certificate* GetFirstCertificate() {
-    return cryptoprovider->GetFirstCertificate();
+    return certStorage->CertGetFirst();
 }
 
 Certificate* GetNextCertificate() {
-    return cryptoprovider->GetNextCertificate();
+    return certStorage->GetNextCertificate();
 }
 
 void SignDocument(Certificate* certificate, 

@@ -5,7 +5,6 @@
 
 class ViPNetCSP : public Cryptoprovider {
 protected:
-    virtual void refillCertificates() override;
 
 public:
     ViPNetCSP();

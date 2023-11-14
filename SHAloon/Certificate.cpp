@@ -8,6 +8,8 @@ void Certificate::SetSubject(const std::string& subject) {
     mSubject = subject;
 }
 
+
+
 std::string Certificate::GetSubject() {
     return mSubject;
 }

@@ -37,13 +37,17 @@ namespace SHAloon_CSharp
 			InitShaloon();
 		}
 
+		private void getFirstCertificate(out IntPtr ptr)
+		{
+            ptr = GetFirstCertificate();
+            if (ptr == IntPtr.Zero) return;
+
+            if (Marshal.PtrToStructure<Certificate>(ptr) is not Certificate certificate) return;
+            Certificates.Add(certificate);
+        }
+
         private void getAllCertificates() {
-			var ptr = GetFirstCertificate();
-			if (ptr == IntPtr.Zero) return;
-
-
-			if (Marshal.PtrToStructure<Certificate>(ptr) is not Certificate certificate) return;
-			Certificates.Add(certificate);
+			getFirstCertificate(out IntPtr ptr);
 
             while ((ptr = GetNextCertificate()) != IntPtr.Zero) {
 				if (Marshal.PtrToStructure<Certificate>(ptr) is not Certificate nextCertificate) return;

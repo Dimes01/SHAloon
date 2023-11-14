@@ -160,6 +160,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Certificate.h" />
+    <ClInclude Include="CertificateStorage.h" />
     <ClInclude Include="CryptoProCSP.h" />
     <ClInclude Include="Cryptoprovider.h" />
     <ClInclude Include="framework.h" />
@@ -171,6 +172,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Certificate.cpp" />
+    <ClCompile Include="CertificateStorage.cpp" />
     <ClCompile Include="CryptoProCSP.cpp" />
     <ClCompile Include="Cryptoprovider.cpp" />
     <ClCompile Include="dllmain.cpp" />
