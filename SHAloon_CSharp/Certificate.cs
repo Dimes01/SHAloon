@@ -8,7 +8,7 @@ namespace SHAloon_CSharp
 {
     public class Certificate
     {
-        public string Subject { get; private set; } = "";
+        public string SubjectName { get; private set; } = "";
         public string PublicKey { get; private set; } = "";
 
     }
