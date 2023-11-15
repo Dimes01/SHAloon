@@ -61,7 +61,7 @@ public class Cryptoprovider	{
 
 	private void addCertificate(IntPtr pcert) {
         Certificate cert = new() {
-			DllPointer = pcert,
+			CppPointer = pcert,
             SubjectName = Marshal.PtrToStringAuto(GetCertificateSubject(pcert)) ?? "",
             IssuerName = Marshal.PtrToStringAuto(GetCertificateIssuer(pcert)) ?? "",
             SerialNumber = Marshal.PtrToStringAuto(GetCertificateSerialNumber(pcert)) ?? "",

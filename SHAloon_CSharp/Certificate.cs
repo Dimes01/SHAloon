@@ -1,7 +1,7 @@
 ﻿namespace SHAloon_CSharp;
 
 public class Certificate {
-    public IntPtr DllPointer { get; set; } = IntPtr.Zero;
+    public IntPtr CppPointer { get; set; } = IntPtr.Zero;
 
     public string SubjectName { get; set; } = "";
     public string IssuerName { get; set; } = "";
