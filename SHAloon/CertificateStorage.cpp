@@ -2,6 +2,9 @@
 #include "CertificateStorage.h"
 
 void CertificateStorage::refillCertificates() {
+	for (auto cert : mCertificates) {
+		if (cert) delete cert;
+	}
 	mCertificates.clear();
 	hCertStore = CertOpenStore(CERT_STORE_PROV_SYSTEM, certificateEncodingType, 0,
 		CERT_SYSTEM_STORE_CURRENT_USER, TEXT("MY"));
