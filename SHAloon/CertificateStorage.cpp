@@ -5,8 +5,9 @@ void CertificateStorage::refillCertificates() {
 	for (auto cert : mCertificates) {
 		if (cert) delete cert;
 	}
+
 	mCertificates.clear();
-	hCertStore = CertOpenStore(CERT_STORE_PROV_SYSTEM, certificateEncodingType, 0,
+	HCERTSTORE hCertStore = CertOpenStore(CERT_STORE_PROV_SYSTEM, certificateEncodingType, 0,
 		CERT_SYSTEM_STORE_CURRENT_USER, TEXT("MY"));
 
 	if (!hCertStore) {
@@ -21,7 +22,6 @@ void CertificateStorage::refillCertificates() {
 	} while (context);
 
 	CertCloseStore(hCertStore, CERT_CLOSE_STORE_CHECK_FLAG);
-	hCertStore = NULL;
 }
 
 void CertificateStorage::parseCertificateInfo(PCCERT_CONTEXT context) {
@@ -29,20 +29,20 @@ void CertificateStorage::parseCertificateInfo(PCCERT_CONTEXT context) {
 
 	tstring subjectName, issuerName;
 
-	DWORD len = CertGetNameString(context, CERT_NAME_SIMPLE_DISPLAY_TYPE, 0, NULL, 0, 0);
+	DWORD len = CertGetNameString(context, CERT_NAME_FRIENDLY_DISPLAY_TYPE, NULL, NULL, NULL, NULL);
 	if (!len) return;
 
 	std::vector<TCHAR> buf(len + 1);
-	if (CertGetNameString(context, CERT_NAME_SIMPLE_DISPLAY_TYPE, 0, NULL, &buf[0], len)) {
+	if (CertGetNameString(context, CERT_NAME_FRIENDLY_DISPLAY_TYPE, NULL, NULL, &buf[0], len)) {
 		subjectName = tstring(buf.begin(), buf.end());
 	} else subjectName = TEXT("### error getting subject name ###");
 
-	len = CertGetNameString(context, CERT_NAME_SIMPLE_DISPLAY_TYPE, CERT_NAME_ISSUER_FLAG, NULL, 0, 0);
+	len = CertGetNameString(context, CERT_NAME_FRIENDLY_DISPLAY_TYPE, CERT_NAME_ISSUER_FLAG, NULL, NULL, NULL);
 	if (!len) return;
 	buf.clear();
 	buf.resize(len + 1);
 
-	if (CertGetNameString(context, CERT_NAME_SIMPLE_DISPLAY_TYPE, CERT_NAME_ISSUER_FLAG, NULL, &buf[0], len)) {
+	if (CertGetNameString(context, CERT_NAME_FRIENDLY_DISPLAY_TYPE, CERT_NAME_ISSUER_FLAG, NULL, &buf[0], len)) {
 		issuerName = tstring(buf.begin(), buf.end());
 	} else issuerName = TEXT("### error getting issuer name ###");
 
@@ -69,6 +69,8 @@ void CertificateStorage::parseCertificateInfo(PCCERT_CONTEXT context) {
 	cert->SetNotAfter(notAfter);
 	cert->SetSerialNumber(serialNumber, serialNumberSize);
 
+	cert->SetCertContext(CertDuplicateCertificateContext(context));
+
 	mCertificates.push_back(cert);
 }
 
@@ -88,7 +90,6 @@ Certificate* CertificateStorage::GetNextCertificate() {
 }
 
 CertificateStorage::~CertificateStorage() {
-	if (hCertStore) CertCloseStore(hCertStore, CERT_CLOSE_STORE_CHECK_FLAG);
 	for (auto cert : mCertificates) {
 		if (cert) delete cert;
 	}

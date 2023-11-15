@@ -8,8 +8,6 @@ class CertificateStorage {
 private:
 	const unsigned int certificateEncodingType = PKCS_7_ASN_ENCODING | X509_ASN_ENCODING;
 
-	HCERTSTORE hCertStore = NULL;
-
 	std::list<Certificate*> mCertificates;
 	std::list<Certificate*>::iterator mCertificatesIterator;
 
@@ -21,6 +19,7 @@ private:
 
 public:
 	CertificateStorage();
+	
 	// Вызов этого метода подразумевает пересканирование сертификатов, поскольку
 	// предполагается, что список сертификатов всегда должен быть актуальным
 	Certificate* GetFirstCertificate();
@@ -28,6 +27,7 @@ public:
 	// Возвращает следующий сертификат из итератора
 	// или nullptr, если достигнут конец списка
 	Certificate* GetNextCertificate();
+	
 	~CertificateStorage();
 };
 

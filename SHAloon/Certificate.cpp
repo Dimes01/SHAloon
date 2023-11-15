@@ -20,13 +20,10 @@ tstring Certificate::GetIssuer() {
 }
 
 void Certificate::SetSerialNumber(const BYTE* serialNumber, const DWORD serialNumberSize) {
-    mSerialNumberBinary = new BYTE[serialNumberSize];
-    CopyMemory(mSerialNumberBinary, serialNumber, serialNumberSize);
-
     tstringstream ss;
 
     for (long long i = static_cast<long long>(serialNumberSize) - 1; i >= 0; --i) {
-        ss << std::setw(2) << std::setfill(TEXT('0')) << std::hex << (int)(mSerialNumberBinary[i]);
+        ss << std::setw(2) << std::setfill(TEXT('0')) << std::hex << (int)(serialNumber[i]);
     }
 
     mSerialNumberString = ss.str();
@@ -44,6 +41,14 @@ tstring Certificate::GetNotAfter() {
     return mNotAfter;
 }
 
+void Certificate::SetCertContext(PCCERT_CONTEXT certContext) {
+    mCertContext = certContext;
+}
+
+PCCERT_CONTEXT Certificate::GetCertContext() {
+    return mCertContext;
+}
+
 Certificate::~Certificate() {
-    if (mSerialNumberBinary) delete[] mSerialNumberBinary;
+    if (mCertContext) CertFreeCertificateContext(mCertContext);
 }

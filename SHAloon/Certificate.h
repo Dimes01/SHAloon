@@ -3,7 +3,7 @@
 class Certificate
 {
 private:
-    BYTE* mSerialNumberBinary = nullptr;
+    PCCERT_CONTEXT mCertContext;
 
     tstring mSubject;
     tstring mIssuer;
@@ -24,6 +24,9 @@ public:
 
     void SetNotAfter(const tstring& notAfter);
     tstring GetNotAfter();
+
+    void SetCertContext(PCCERT_CONTEXT certContext);
+    PCCERT_CONTEXT GetCertContext();
 
     ~Certificate();
 };
