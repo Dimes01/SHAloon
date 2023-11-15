@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "ShaloonUtils.h"
 
-const char* ShaloonUtils::ToConstCharArray(const std::string& str) {
+LPCTSTR ShaloonUtils::ToLPCTSTR(const tstring& str) {
     size_t size = str.size() + 1;
-    char* result = new char[size];
-    strcpy_s(result, size, str.c_str());
+    LPTSTR result = new TCHAR[size];
+    StringCchCopy(result, size, str.c_str());
     return result;
 }

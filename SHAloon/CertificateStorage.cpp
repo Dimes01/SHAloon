@@ -4,7 +4,7 @@
 void CertificateStorage::refillCertificates() {
 	mCertificates.clear();
 	hCertStore = CertOpenStore(CERT_STORE_PROV_SYSTEM, certificateEncodingType, 0,
-		CERT_SYSTEM_STORE_CURRENT_USER, _TEXT("MY"));
+		CERT_SYSTEM_STORE_CURRENT_USER, TEXT("MY"));
 
 	if (!hCertStore) {
 		return;
@@ -12,32 +12,36 @@ void CertificateStorage::refillCertificates() {
 
 	PCCERT_CONTEXT context = NULL;
 
-	while (context = CertEnumCertificatesInStore(hCertStore, context)) {
+	do {
+		context = CertEnumCertificatesInStore(hCertStore, context);
 		parseCertificateInfo(context);
-	}
+	} while (context);
 
 	CertCloseStore(hCertStore, CERT_CLOSE_STORE_CHECK_FLAG);
 	hCertStore = NULL;
 }
 
 void CertificateStorage::parseCertificateInfo(PCCERT_CONTEXT context) {
-	std::string subjectName, issuerName;
+	if (!context) return;
+
+	tstring subjectName, issuerName;
 
 	DWORD len = CertGetNameString(context, CERT_NAME_SIMPLE_DISPLAY_TYPE, 0, NULL, 0, 0);
 	if (!len) return;
 
 	std::vector<TCHAR> buf(len + 1);
 	if (CertGetNameString(context, CERT_NAME_SIMPLE_DISPLAY_TYPE, 0, NULL, &buf[0], len)) {
-		subjectName = std::string(buf.begin(), buf.end());
-	} else subjectName = "### error getting subject name ###";
+		subjectName = tstring(buf.begin(), buf.end());
+	} else subjectName = TEXT("### error getting subject name ###");
 
 	len = CertGetNameString(context, CERT_NAME_SIMPLE_DISPLAY_TYPE, CERT_NAME_ISSUER_FLAG, NULL, 0, 0);
 	if (!len) return;
 	buf.clear();
+	buf.resize(len + 1);
 
-	if (CertGetNameStringW(context, CERT_NAME_SIMPLE_DISPLAY_TYPE, CERT_NAME_ISSUER_FLAG, NULL, &buf[0], len)) {
-		issuerName = std::string(buf.begin(), buf.end());
-	} else issuerName = "### error getting issuer name ###";
+	if (CertGetNameString(context, CERT_NAME_SIMPLE_DISPLAY_TYPE, CERT_NAME_ISSUER_FLAG, NULL, &buf[0], len)) {
+		issuerName = tstring(buf.begin(), buf.end());
+	} else issuerName = TEXT("### error getting issuer name ###");
 
 	auto fileTimeNotAfter = context->pCertInfo->NotAfter;
 	SYSTEMTIME st;
@@ -45,29 +49,22 @@ void CertificateStorage::parseCertificateInfo(PCCERT_CONTEXT context) {
 	FileTimeToSystemTime(&fileTimeNotAfter, &st);
 	
 	auto sw = std::setw(2);
-	auto sf = std::setfill('0');
-	std::stringstream ss;
-	ss << st.wYear << "-"
-		<< sw << sf << st.wMonth << "-"
+	auto sf = std::setfill(TEXT('0'));
+	tstringstream ss;
+	ss << st.wYear << TEXT("-")
+		<< sw << sf << st.wMonth << TEXT("-")
 		<< sw << sf << st.wDay;
 
-	std::string notAfter(ss.str());
+	tstring notAfter(ss.str());
 
-	auto serial = context->pCertInfo->SerialNumber.pbData;
-	auto size = context->pCertInfo->SerialNumber.cbData;
-
-	char* copy = new char[size + 1];
-	strcpy_s(copy, size, reinterpret_cast<char*>(serial));
-	copy[size] = '\0';
-
-	std::string serialNumber(copy);
-	delete[] copy;
+	auto serialNumber = context->pCertInfo->SerialNumber.pbData;
+	auto serialNumberSize = context->pCertInfo->SerialNumber.cbData;
 
 	auto cert = new Certificate();
 	cert->SetIssuer(issuerName);
 	cert->SetSubject(subjectName);
 	cert->SetNotAfter(notAfter);
-	cert->SetSerialNumber(serialNumber);
+	cert->SetSerialNumber(serialNumber, serialNumberSize);
 
 	mCertificates.push_back(cert);
 }
@@ -89,4 +86,7 @@ Certificate* CertificateStorage::GetNextCertificate() {
 
 CertificateStorage::~CertificateStorage() {
 	if (hCertStore) CertCloseStore(hCertStore, CERT_CLOSE_STORE_CHECK_FLAG);
+	for (auto cert : mCertificates) {
+		if (cert) delete cert;
+	}
 }

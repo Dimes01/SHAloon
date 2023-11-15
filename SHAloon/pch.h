@@ -18,5 +18,14 @@
 #include <chrono>
 #include <format>
 #include <iostream>
+#include <strsafe.h>
+
+#ifndef MY_TSTRING
+#define MY_TSTRING
+
+typedef std::basic_string<TCHAR> tstring;
+typedef std::basic_stringstream<TCHAR> tstringstream;
+
+#endif // MY_TSTRING
 
 #endif //PCH_H

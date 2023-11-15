@@ -13,7 +13,11 @@ CryptoProCSP::CryptoProCSP() : Cryptoprovider() {
 }
 
 void CryptoProCSP::SignDocument(Certificate* certificate,
-                                const std::string& absoluteFilePath, 
-                                const std::string& absoluteSignaturePath) {
+                                const tstring& absoluteFilePath, 
+                                const tstring& absoluteSignaturePath) {
     
+}
+
+CryptoProCSP::~CryptoProCSP() {
+
 }

@@ -2,6 +2,8 @@
 #include "ShaloonLibrary.h"
 
 void InitShaloon() {
+    certStorage = new CertificateStorage();
+
     cryptoprovider = new CryptoProCSP();
     if (cryptoprovider->IsInitialized()) {
         std::cout << "CryptoPro is working here!\n";
@@ -16,6 +18,12 @@ void InitShaloon() {
     }
 }
 
+void FinishShaloon() {
+    if (cryptoprovider) delete cryptoprovider;
+    if (certStorage) delete certStorage;
+    if (logger) delete logger;
+}
+
 Certificate* GetFirstCertificate() {
     return certStorage->GetFirstCertificate();
 }
@@ -25,8 +33,8 @@ Certificate* GetNextCertificate() {
 }
 
 void SignDocument(Certificate* certificate, 
-                  const char* absoluteFilePath,
-                  const char* absoluteSignaturePath) {
+                  const LPTSTR absoluteFilePath,
+                  const LPTSTR absoluteSignaturePath) {
     /*
     TODO:
         1. Проверить документ на существование
@@ -36,33 +44,55 @@ void SignDocument(Certificate* certificate,
     */
 
     // Временный пример использования логгера
-    Logger::Log(logger, false, "КриптоПро CSP", "Ошибка при создании подписи", "Ошибка #519: тыры-пыры", LogLevel::LOG_ERROR);
+    Logger::Log(logger, false, TEXT("КриптоПро CSP"), TEXT("Ошибка при создании подписи"),
+        TEXT("Ошибка #519: тыры-пыры"), LogLevel::LOG_ERROR);
 }
 
 
-const char* GetLogSource() {
-    std::string source = logger->GetLogSource();
-    return ShaloonUtils::ToConstCharArray(source);
+LPCTSTR GetCertificateSubject(Certificate* certificate) {
+    auto subject = certificate->GetSubject();
+    return ShaloonUtils::ToLPCTSTR(subject);
 }
 
-const char* GetLogSummary() {
-    std::string summary = logger->GetLogSummary();
-    return ShaloonUtils::ToConstCharArray(summary);
+LPCTSTR GetCertificateIssuer(Certificate* certificate) {
+    auto subject = certificate->GetIssuer();
+    return ShaloonUtils::ToLPCTSTR(subject);
 }
 
-const char* GetLogMessage() {
-    std::string message = logger->GetLogMessage();
-    return ShaloonUtils::ToConstCharArray(message);
+LPCTSTR GetCertificateSerialNumber(Certificate* certificate) {
+    auto subject = certificate->GetSerialNumber();
+    return ShaloonUtils::ToLPCTSTR(subject);
 }
 
-const char* GetLogTime() {
-    std::string time = logger->GetLogTime();
-    return ShaloonUtils::ToConstCharArray(time);
+LPCTSTR GetCertificateNotAfter(Certificate* certificate) {
+    auto subject = certificate->GetNotAfter();
+    return ShaloonUtils::ToLPCTSTR(subject);
 }
 
-const char* GetLogLevel() {
-    std::string logLevel = logger->GetLogLevel();
-    return ShaloonUtils::ToConstCharArray(logLevel);
+
+LPCTSTR GetLogSource() {
+    tstring source = logger->GetLogSource();
+    return ShaloonUtils::ToLPCTSTR(source);
+}
+
+LPCTSTR GetLogSummary() {
+    tstring summary = logger->GetLogSummary();
+    return ShaloonUtils::ToLPCTSTR(summary);
+}
+
+LPCTSTR GetLogMessage() {
+    tstring message = logger->GetLogMessage();
+    return ShaloonUtils::ToLPCTSTR(message);
+}
+
+LPCTSTR GetLogTime() {
+    tstring time = logger->GetLogTime();
+    return ShaloonUtils::ToLPCTSTR(time);
+}
+
+LPCTSTR GetLogLevel() {
+    tstring logLevel = logger->GetLogLevel();
+    return ShaloonUtils::ToLPCTSTR(logLevel);
 }
 
 bool GetLogSuccess() {

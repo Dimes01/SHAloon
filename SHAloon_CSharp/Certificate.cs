@@ -8,8 +8,9 @@ namespace SHAloon_CSharp
 {
     public class Certificate
     {
-        public string SubjectName { get; private set; } = "";
-        public string PublicKey { get; private set; } = "";
-
+        public string SubjectName { get; set; } = "";
+        public string IssuerName { get; set; } = "";
+        public string SerialNumber { get; set; } = "";
+        public string NotAfter { get; set; } = "";
     }
 }

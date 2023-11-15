@@ -11,7 +11,7 @@ bool Cryptoprovider::IsInitialized() {
 
 
 Cryptoprovider::~Cryptoprovider() {
-    //for (auto& certificate : mCertificates) {
-    //    if (certificate != nullptr) delete certificate;
-    //}
+    if (hCryptProv) {
+        CryptReleaseContext(hCryptProv, 0);
+    }
 }

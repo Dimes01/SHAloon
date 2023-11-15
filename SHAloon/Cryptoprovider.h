@@ -14,7 +14,7 @@ public:
     bool IsInitialized();
 
     virtual void SignDocument(Certificate* certificate, 
-        const std::string& absoluteFilePath, const std::string& absoluteSignaturePath) = 0;
+        const tstring& absoluteFilePath, const tstring& absoluteSignaturePath) = 0;
 
     virtual ~Cryptoprovider();
 };

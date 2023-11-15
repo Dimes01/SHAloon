@@ -9,9 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="SHAloon_CSharp">
-      <HintPath>..\SHAloon_CSharp\bin\Debug\net7.0\SHAloon_CSharp.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\SHAloon_CSharp\SHAloon_CSharp.csproj" />
   </ItemGroup>
 
 </Project>

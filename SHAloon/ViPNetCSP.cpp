@@ -14,7 +14,11 @@ ViPNetCSP::ViPNetCSP() : Cryptoprovider() {
 
 
 void ViPNetCSP::SignDocument(Certificate* certificate,
-                             const std::string& absoluteFilePath, 
-                             const std::string& absoluteSignaturePath) {
+                             const tstring& absoluteFilePath, 
+                             const tstring& absoluteSignaturePath) {
+
+}
+
+ViPNetCSP::~ViPNetCSP() {
 
 }

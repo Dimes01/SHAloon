@@ -2,9 +2,14 @@ LIBRARY "SHAloon"
 
 EXPORTS
 InitShaloon
+FinishShaloon
 GetFirstCertificate
 GetNextCertificate
 SignDocument
+GetCertificateSubject
+GetCertificateIssuer
+GetCertificateSerialNumber
+GetCertificateNotAfter
 GetLogSource
 GetLogSummary
 GetLogMessage

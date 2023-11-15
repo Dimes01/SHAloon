@@ -8,30 +8,30 @@ enum class LogLevel {
 };
 
 // YYYY-MM-DD hh:mm:ss
-constexpr auto LogTimeFormat = "{:%Y-%m-%d %X}";
+constexpr auto LogTimeFormat = TEXT("{:%Y-%m-%d %X}");
 
 class Logger {
 private:
-    std::string mSource;
-    std::string mSummary;
-    std::string mMessage;
-    std::string mTime;
-    std::string mLogLevel;
+    tstring mSource;
+    tstring mSummary;
+    tstring mMessage;
+    tstring mTime;
+    tstring mLogLevel;
     bool mSuccess;
 
-    std::string toString(const LogLevel& logLevel);
+    tstring toString(const LogLevel& logLevel);
 
 public:
-    Logger(bool success, const std::string& source, const std::string& summary, const std::string& message, LogLevel logLevel);
+    Logger(bool success, const tstring& source, const tstring& summary, const tstring& message, LogLevel logLevel);
 
-    std::string GetLogSource();
-    std::string GetLogSummary();
-    std::string GetLogMessage();
-    std::string GetLogTime();
-    std::string GetLogLevel();
+    tstring GetLogSource();
+    tstring GetLogSummary();
+    tstring GetLogMessage();
+    tstring GetLogTime();
+    tstring GetLogLevel();
     bool GetLogSuccess();
 
-    static void Log(Logger* logger, bool success, const std::string& source, const std::string& summary, 
-        const std::string& message, LogLevel logLevel);
+    static void Log(Logger* logger, bool success, const tstring& source, const tstring& summary, 
+        const tstring& message, LogLevel logLevel);
 };
 

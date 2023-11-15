@@ -3,24 +3,28 @@
 class Certificate
 {
 private:
-    std::string mSubject;
-    std::string mIssuer;
-    std::string mSerialNumber;
-    std::string mNotAfter;
+    BYTE* mSerialNumberBinary = nullptr;
+
+    tstring mSubject;
+    tstring mIssuer;
+    tstring mSerialNumberString;
+    tstring mNotAfter;
 
 public:
     Certificate();
 
-    void SetSubject(const std::string& subject);
-    std::string GetSubject();
+    void SetSubject(const tstring& subject);
+    tstring GetSubject();
 
-    void SetIssuer(const std::string& issuer);
-    std::string GetIssuer();
+    void SetIssuer(const tstring& issuer);
+    tstring GetIssuer();
 
-    void SetSerialNumber(const std::string& serialNumber);
-    std::string GetSerialNumber();
+    void SetSerialNumber(const BYTE* serialNumber, const DWORD serialNumberSize);
+    tstring GetSerialNumber();
 
-    void SetNotAfter(const std::string& notAfter);
-    std::string GetNotAfter();
+    void SetNotAfter(const tstring& notAfter);
+    tstring GetNotAfter();
+
+    ~Certificate();
 };
 

@@ -16,18 +16,34 @@ namespace SHAloon_CSharp
 		private static extern void InitShaloon();
 
 		[DllImport(path_to_dll_cryptoprovider, CallingConvention = CallingConvention.Cdecl)]
+		private static extern void FinishShaloon();
+								   
+		[DllImport(path_to_dll_cryptoprovider, CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr GetFirstCertificate();
-
 
         [DllImport(path_to_dll_cryptoprovider, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr GetNextCertificate();
 
-		#endregion
-		#region Конструкторы
+		[DllImport(path_to_dll_cryptoprovider, CallingConvention = CallingConvention.Cdecl)]
+		private static extern IntPtr GetCertificateSubject(IntPtr cert);
 
-		public Cryptoprovider() {
+		[DllImport(path_to_dll_cryptoprovider, CallingConvention = CallingConvention.Cdecl)]
+		private static extern IntPtr GetCertificateIssuer(IntPtr cert);
+
+		[DllImport(path_to_dll_cryptoprovider, CallingConvention = CallingConvention.Cdecl)]
+		private static extern IntPtr GetCertificateSerialNumber(IntPtr cert);
+
+		[DllImport(path_to_dll_cryptoprovider, CallingConvention = CallingConvention.Cdecl)]
+		private static extern IntPtr GetCertificateNotAfter(IntPtr cert);
+
+
+        #endregion
+        #region Конструкторы
+
+        public Cryptoprovider() {
 			initShaloon();
-			//getAllCertificates();
+			getAllCertificates();
+			finishShaloon();
 		}
 
         #endregion
@@ -37,23 +53,41 @@ namespace SHAloon_CSharp
 			InitShaloon();
 		}
 
-		private void getFirstCertificate(out IntPtr ptr)
-		{
-            ptr = GetFirstCertificate();
-            if (ptr == IntPtr.Zero) return;
+		private void finishShaloon() {
+			FinishShaloon();
+		}
 
-            if (Marshal.PtrToStructure<Certificate>(ptr) is not Certificate certificate) return;
-            Certificates.Add(certificate);
+		private IntPtr getFirstCertificate() {
+			IntPtr pcert = GetFirstCertificate();
+            if (pcert == IntPtr.Zero) return IntPtr.Zero;
+
+			addCertificate(pcert);
+			return pcert;
         }
 
         private void getAllCertificates() {
-			getFirstCertificate(out IntPtr ptr);
+			IntPtr pcert = getFirstCertificate();
 
-            while ((ptr = GetNextCertificate()) != IntPtr.Zero) {
-				if (Marshal.PtrToStructure<Certificate>(ptr) is not Certificate nextCertificate) return;
-				Certificates.Add(nextCertificate);
+            while ((pcert = GetNextCertificate()) != IntPtr.Zero) {
+				addCertificate(pcert);
             }
         }
+
+		private void addCertificate(IntPtr pcert) {
+			var subject = GetCertificateSubject(pcert);
+			var issuer = GetCertificateIssuer(pcert);
+			var serialNumber = GetCertificateSerialNumber(pcert);
+			var notAfter = GetCertificateNotAfter(pcert);
+
+            Certificate cert = new() {
+                SubjectName = Marshal.PtrToStringAuto(subject) ?? "",
+                IssuerName = Marshal.PtrToStringAuto(issuer) ?? "",
+                SerialNumber = Marshal.PtrToStringAuto(serialNumber) ?? "",
+                NotAfter = Marshal.PtrToStringAuto(notAfter) ?? ""
+            };
+
+            Certificates.Add(cert);
+		}
 
 		#endregion
 	}

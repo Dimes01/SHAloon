@@ -10,6 +10,8 @@ public:
     ViPNetCSP();
 
     virtual void SignDocument(Certificate* certificate,
-        const std::string& absoluteFilePath, const std::string& absoluteSignaturePath) override;
+        const tstring& absoluteFilePath, const tstring& absoluteSignaturePath) override;
+
+    virtual ~ViPNetCSP();
 };
 
