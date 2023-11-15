@@ -2,6 +2,7 @@
 
 #include "Certificate.h"
 #include "ShaloonUtils.h"
+#include "Logger.h"
 
 
 class CertificateStorage {
@@ -18,6 +19,8 @@ private:
 	void parseCertificateInfo(PCCERT_CONTEXT context);
 
 public:
+	static CertificateStorage* Instance;
+
 	CertificateStorage();
 	
 	// Вызов этого метода подразумевает пересканирование сертификатов, поскольку
@@ -30,4 +33,3 @@ public:
 	
 	~CertificateStorage();
 };
-

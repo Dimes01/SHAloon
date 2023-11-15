@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "CertificateStorage.h"
 
+CertificateStorage* CertificateStorage::Instance = nullptr;
+
 void CertificateStorage::refillCertificates() {
 	for (auto cert : mCertificates) {
 		if (cert) delete cert;
@@ -11,6 +13,11 @@ void CertificateStorage::refillCertificates() {
 		CERT_SYSTEM_STORE_CURRENT_USER, TEXT("MY"));
 
 	if (!hCertStore) {
+		tstringstream errorCode;
+		errorCode << "WINAPI error code: 0x" << std::hex << GetLastError();
+		Logger::Log(false, TEXT("Shaloon::CertificateStorage::refillCertificates()"),
+						   TEXT("Error opening certificate store"),
+						   errorCode.str(), LogLevel::LOG_ERROR);
 		return;
 	}
 
@@ -21,7 +28,13 @@ void CertificateStorage::refillCertificates() {
 		parseCertificateInfo(context);
 	} while (context);
 
-	CertCloseStore(hCertStore, CERT_CLOSE_STORE_CHECK_FLAG);
+	if (!CertCloseStore(hCertStore, CERT_CLOSE_STORE_CHECK_FLAG)) {
+		tstringstream errorCode;
+		errorCode << "WINAPI error code: 0x" << std::hex << GetLastError();
+		Logger::Log(false, TEXT("Shaloon::CertificateStorage::refillCertificates()"),
+						   TEXT("Error closing certificate store"),
+						   errorCode.str(), LogLevel::LOG_ERROR);
+	}
 }
 
 void CertificateStorage::parseCertificateInfo(PCCERT_CONTEXT context) {
@@ -30,21 +43,50 @@ void CertificateStorage::parseCertificateInfo(PCCERT_CONTEXT context) {
 	tstring subjectName, issuerName;
 
 	DWORD len = CertGetNameString(context, CERT_NAME_FRIENDLY_DISPLAY_TYPE, NULL, NULL, NULL, NULL);
-	if (!len) return;
+	if (!len) {
+		tstringstream errorCode;
+		errorCode << "WINAPI error code: 0x" << std::hex << GetLastError();
+		Logger::Log(false, TEXT("Shaloon::CertificateStorage::parseCertificateInfo()"),
+						   TEXT("Error with 1st call of CertGetNameString for subject"),
+						   errorCode.str(), LogLevel::LOG_ERROR);
+		return;
+	}
 
 	std::vector<TCHAR> buf(len + 1);
 	if (CertGetNameString(context, CERT_NAME_FRIENDLY_DISPLAY_TYPE, NULL, NULL, &buf[0], len)) {
 		subjectName = tstring(buf.begin(), buf.end());
-	} else subjectName = TEXT("### error getting subject name ###");
+	} else {
+		tstringstream errorCode;
+		errorCode << "WINAPI error code: 0x" << std::hex << GetLastError();
+		Logger::Log(false, TEXT("Shaloon::CertificateStorage::parseCertificateInfo()"),
+						   TEXT("Error with 2nd call of CertGetNameString for subject"),
+						   errorCode.str(), LogLevel::LOG_ERROR);
+		return;
+	}
 
 	len = CertGetNameString(context, CERT_NAME_FRIENDLY_DISPLAY_TYPE, CERT_NAME_ISSUER_FLAG, NULL, NULL, NULL);
-	if (!len) return;
+	if (!len) {
+		tstringstream errorCode;
+		errorCode << "WINAPI error code: 0x" << std::hex << GetLastError();
+		Logger::Log(false, TEXT("Shaloon::CertificateStorage::parseCertificateInfo()"),
+					       TEXT("Error with 1st call of CertGetNameString for issuer"),
+						   errorCode.str(), LogLevel::LOG_ERROR);
+		return;
+	}
+	
 	buf.clear();
 	buf.resize(len + 1);
 
 	if (CertGetNameString(context, CERT_NAME_FRIENDLY_DISPLAY_TYPE, CERT_NAME_ISSUER_FLAG, NULL, &buf[0], len)) {
 		issuerName = tstring(buf.begin(), buf.end());
-	} else issuerName = TEXT("### error getting issuer name ###");
+	} else {
+		tstringstream errorCode;
+		errorCode << "WINAPI error code: 0x" << std::hex << GetLastError();
+		Logger::Log(false, TEXT("Shaloon::CertificateStorage::parseCertificateInfo()"),
+					       TEXT("Error with 2nd call of CertGetNameString for issuer"),
+						   errorCode.str(), LogLevel::LOG_ERROR);
+		return;
+	}
 
 	auto fileTimeNotAfter = context->pCertInfo->NotAfter;
 	SYSTEMTIME st;
@@ -79,7 +121,11 @@ CertificateStorage::CertificateStorage() {}
 Certificate* CertificateStorage::GetFirstCertificate() {
 	refillCertificates();
 	mCertificatesIterator = mCertificates.begin();
-	if (mCertificatesIterator == mCertificates.end()) return nullptr;
+	if (mCertificatesIterator == mCertificates.end()) {
+		Logger::Log(false, TEXT("Shaloon::CertificateStorage::GetFirstCertificate()"),
+						   TEXT("Certificates list is empty"), TEXT(""), LogLevel::LOG_WARN);
+		return nullptr;
+	}
 	return *mCertificatesIterator;
 }
 

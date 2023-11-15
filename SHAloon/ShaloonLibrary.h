@@ -9,8 +9,6 @@
 #define SHALOONAPI __declspec(dllexport)
 
 Cryptoprovider* cryptoprovider;
-CertificateStorage* certStorage;
-Logger* logger;
 
 extern "C" {
     SHALOONAPI void InitShaloon();

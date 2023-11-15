@@ -19,19 +19,29 @@ private:
     tstring mLogLevel;
     bool mSuccess;
 
-    tstring toString(const LogLevel& logLevel);
-
 public:
-    Logger(bool success, const tstring& source, const tstring& summary, const tstring& message, LogLevel logLevel);
+    static Logger* Instance;
+    
+    Logger();
 
     tstring GetLogSource();
-    tstring GetLogSummary();
-    tstring GetLogMessage();
-    tstring GetLogTime();
-    tstring GetLogLevel();
-    bool GetLogSuccess();
+    void SetLogSource(const tstring& source);
 
-    static void Log(Logger* logger, bool success, const tstring& source, const tstring& summary, 
+    tstring GetLogSummary();
+    void SetLogSummary(const tstring& summary);
+
+    tstring GetLogMessage();
+    void SetLogMessage(const tstring& message);
+
+    tstring GetLogTime();
+    void SetLogTime();
+
+    tstring GetLogLevel();
+    void SetLogLevel(LogLevel logLevel);
+
+    bool GetLogSuccess();
+    void SetLogSuccess(bool success);
+
+    static void Log(bool success, const tstring& source, const tstring& summary, 
         const tstring& message, LogLevel logLevel);
 };
-
