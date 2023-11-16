@@ -1,32 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.InteropServices;
 
 namespace SHAloon_CSharp;
 
 internal static class CertificateStorage {
     internal static IList<Certificate> Certificates { get; private set; } = new List<Certificate>();
 
-    internal static void getAllCertificates()
-    {
+    internal static void getAllCertificates() {
         IntPtr pcert = ImportsDLL.GetFirstCertificate();
         if (pcert == IntPtr.Zero) return;
 
         addCertificate(pcert);
 
-        while ((pcert = ImportsDLL.GetNextCertificate()) != IntPtr.Zero)
-        {
+        while ((pcert = ImportsDLL.GetNextCertificate()) != IntPtr.Zero) {
             addCertificate(pcert);
         }
     }
 
-    private static void addCertificate(IntPtr pcert)
-    {
-        Certificate cert = new()
-        {
+    private static void addCertificate(IntPtr pcert) {
+        Certificate cert = new() {
             CppPointer = pcert,
             SubjectName = Marshal.PtrToStringAuto(ImportsDLL.GetCertificateSubject(pcert)) ?? "",
             IssuerName = Marshal.PtrToStringAuto(ImportsDLL.GetCertificateIssuer(pcert)) ?? "",
