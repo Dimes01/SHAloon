@@ -25,11 +25,11 @@ void FinishShaloon() {
 }
 
 Certificate* GetFirstCertificate() {
-    return certStorage->GetFirstCertificate();
+    return CertificateStorage::Instance->GetFirstCertificate();
 }
 
 Certificate* GetNextCertificate() {
-    return certStorage->GetNextCertificate();
+    return CertificateStorage::Instance->GetNextCertificate();
 }
 
 void SignDocument(Certificate* certificate, 
