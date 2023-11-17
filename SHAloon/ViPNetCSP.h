@@ -5,12 +5,15 @@
 
 class ViPNetCSP : public Cryptoprovider {
 protected:
+    virtual LPSTR getHashOidByKeyOid(LPSTR szKeyOid) override;
 
 public:
     ViPNetCSP();
 
     virtual void SignDocument(Certificate* certificate,
-        const tstring& absoluteFilePath, const tstring& absoluteSignaturePath) override;
+        LPCTSTR absoluteFilePath, LPCTSTR absoluteSignaturePath) override;
+
+    virtual Certificate* VerifySignature(LPCTSTR absoluteFilePath, LPCTSTR absoluteSignaturePath) override;
 
     virtual ~ViPNetCSP();
 };

@@ -9,13 +9,13 @@ void CertificateStorage::refillCertificates() {
 	}
 
 	mCertificates.clear();
-	HCERTSTORE hCertStore = CertOpenStore(CERT_STORE_PROV_SYSTEM, certificateEncodingType, 0,
+	HCERTSTORE hCertStore = CertOpenStore(CERT_STORE_PROV_SYSTEM, CertificateEncodingType, 0,
 		CERT_SYSTEM_STORE_CURRENT_USER, TEXT("MY"));
 
 	if (!hCertStore) {
 		tstringstream errorCode;
 		errorCode << "WINAPI error code: 0x" << std::hex << GetLastError();
-		Logger::Log(false, TEXT("Shaloon::CertificateStorage::refillCertificates()"),
+		Logger::Log(false, TEXT("CertificateStorage::refillCertificates()"),
 						   TEXT("Error opening certificate store"),
 						   errorCode.str(), LogLevel::LOG_ERROR);
 		return;
@@ -25,20 +25,24 @@ void CertificateStorage::refillCertificates() {
 
 	do {
 		context = CertEnumCertificatesInStore(hCertStore, context);
-		parseCertificateInfo(context);
+		Certificate* cert = ParseCertificateInfo(context);
+		if (cert != nullptr) {
+			cert->SetCertContext(CertDuplicateCertificateContext(context));
+			mCertificates.push_back(cert);
+		}
 	} while (context);
 
 	if (!CertCloseStore(hCertStore, CERT_CLOSE_STORE_CHECK_FLAG)) {
 		tstringstream errorCode;
 		errorCode << "WINAPI error code: 0x" << std::hex << GetLastError();
-		Logger::Log(false, TEXT("Shaloon::CertificateStorage::refillCertificates()"),
+		Logger::Log(false, TEXT("CertificateStorage::refillCertificates()"),
 						   TEXT("Error closing certificate store"),
 						   errorCode.str(), LogLevel::LOG_ERROR);
 	}
 }
 
-void CertificateStorage::parseCertificateInfo(PCCERT_CONTEXT context) {
-	if (!context) return;
+Certificate* CertificateStorage::ParseCertificateInfo(PCCERT_CONTEXT context) {
+	if (!context) return nullptr;
 
 	tstring subjectName, issuerName;
 
@@ -46,10 +50,10 @@ void CertificateStorage::parseCertificateInfo(PCCERT_CONTEXT context) {
 	if (!len) {
 		tstringstream errorCode;
 		errorCode << "WINAPI error code: 0x" << std::hex << GetLastError();
-		Logger::Log(false, TEXT("Shaloon::CertificateStorage::parseCertificateInfo()"),
-						   TEXT("Error with 1st call of CertGetNameString for subject"),
+		Logger::Log(false, TEXT("CertificateStorage::ParseCertificateInfo()"),
+						   TEXT("Error calling CertGetNameString() for 1st time for subject"),
 						   errorCode.str(), LogLevel::LOG_ERROR);
-		return;
+		return nullptr;
 	}
 
 	std::vector<TCHAR> buf(len + 1);
@@ -58,20 +62,20 @@ void CertificateStorage::parseCertificateInfo(PCCERT_CONTEXT context) {
 	} else {
 		tstringstream errorCode;
 		errorCode << "WINAPI error code: 0x" << std::hex << GetLastError();
-		Logger::Log(false, TEXT("Shaloon::CertificateStorage::parseCertificateInfo()"),
-						   TEXT("Error with 2nd call of CertGetNameString for subject"),
+		Logger::Log(false, TEXT("CertificateStorage::ParseCertificateInfo()"),
+						   TEXT("Error calling CertGetNameString() for 2nd time for subject"),
 						   errorCode.str(), LogLevel::LOG_ERROR);
-		return;
+		return nullptr;
 	}
 
 	len = CertGetNameString(context, CERT_NAME_FRIENDLY_DISPLAY_TYPE, CERT_NAME_ISSUER_FLAG, NULL, NULL, NULL);
 	if (!len) {
 		tstringstream errorCode;
 		errorCode << "WINAPI error code: 0x" << std::hex << GetLastError();
-		Logger::Log(false, TEXT("Shaloon::CertificateStorage::parseCertificateInfo()"),
-					       TEXT("Error with 1st call of CertGetNameString for issuer"),
+		Logger::Log(false, TEXT("CertificateStorage::ParseCertificateInfo()"),
+					       TEXT("Error calling CertGetNameString() for 1st time for issuer"),
 						   errorCode.str(), LogLevel::LOG_ERROR);
-		return;
+		return nullptr;
 	}
 	
 	buf.clear();
@@ -82,10 +86,10 @@ void CertificateStorage::parseCertificateInfo(PCCERT_CONTEXT context) {
 	} else {
 		tstringstream errorCode;
 		errorCode << "WINAPI error code: 0x" << std::hex << GetLastError();
-		Logger::Log(false, TEXT("Shaloon::CertificateStorage::parseCertificateInfo()"),
-					       TEXT("Error with 2nd call of CertGetNameString for issuer"),
+		Logger::Log(false, TEXT("CertificateStorage::ParseCertificateInfo()"),
+					       TEXT("Error calling CertGetNameString() for 2nd time for issuer"),
 						   errorCode.str(), LogLevel::LOG_ERROR);
-		return;
+		return nullptr;
 	}
 
 	auto fileTimeNotAfter = context->pCertInfo->NotAfter;
@@ -111,9 +115,7 @@ void CertificateStorage::parseCertificateInfo(PCCERT_CONTEXT context) {
 	cert->SetNotAfter(notAfter);
 	cert->SetSerialNumber(serialNumber, serialNumberSize);
 
-	cert->SetCertContext(CertDuplicateCertificateContext(context));
-
-	mCertificates.push_back(cert);
+	return cert;
 }
 
 CertificateStorage::CertificateStorage() {}
@@ -122,7 +124,7 @@ Certificate* CertificateStorage::GetFirstCertificate() {
 	refillCertificates();
 	mCertificatesIterator = mCertificates.begin();
 	if (mCertificatesIterator == mCertificates.end()) {
-		Logger::Log(false, TEXT("Shaloon::CertificateStorage::GetFirstCertificate()"),
+		Logger::Log(false, TEXT("CertificateStorage::GetFirstCertificate()"),
 						   TEXT("Certificates list is empty"), TEXT(""), LogLevel::LOG_WARN);
 		return nullptr;
 	}

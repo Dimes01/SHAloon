@@ -18,6 +18,9 @@
 #include <chrono>
 #include <format>
 #include <iostream>
+#include <fstream>
+#include <filesystem>
+#include <system_error>
 #include <strsafe.h>
 
 #ifndef MY_TSTRING

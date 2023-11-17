@@ -33,19 +33,13 @@ Certificate* GetNextCertificate() {
 }
 
 void SignDocument(Certificate* certificate, 
-                  const LPTSTR absoluteFilePath,
-                  const LPTSTR absoluteSignaturePath) {
-    /*
-    TODO:
-        1. Проверить документ на существование
-        2. Если документ не существует, записать это в лог последней совершённой операции: неудача
-        3. Обратиться к криптопровайдеру на подпись документа, если документ существует
-        4. Записать результат подписания в лог последней совершённой операции: успех
-    */
+                  LPCTSTR absoluteFilePath,
+                  LPCTSTR absoluteSignaturePath) {
+    cryptoprovider->SignDocument(certificate, absoluteFilePath, absoluteSignaturePath);
+}
 
-    // Временный пример использования логгера
-    Logger::Log(false, TEXT("КриптоПро CSP"), TEXT("Ошибка при создании подписи"),
-        TEXT("Ошибка #519: тыры-пыры"), LogLevel::LOG_ERROR);
+SHALOONAPI Certificate* VerifySignature(LPCTSTR absoluteFilePath, LPCTSTR absoluteSignaturePath) {
+    return cryptoprovider->VerifySignature(absoluteFilePath, absoluteSignaturePath);
 }
 
 

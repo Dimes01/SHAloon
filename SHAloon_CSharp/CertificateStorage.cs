@@ -17,14 +17,7 @@ internal static class CertificateStorage {
     }
 
     private static void addCertificate(IntPtr pcert) {
-        Certificate cert = new() {
-            CppPointer = pcert,
-            SubjectName = Marshal.PtrToStringAuto(ImportsDLL.GetCertificateSubject(pcert)) ?? "",
-            IssuerName = Marshal.PtrToStringAuto(ImportsDLL.GetCertificateIssuer(pcert)) ?? "",
-            SerialNumber = Marshal.PtrToStringAuto(ImportsDLL.GetCertificateSerialNumber(pcert)) ?? "",
-            NotAfter = Marshal.PtrToStringAuto(ImportsDLL.GetCertificateNotAfter(pcert)) ?? ""
-        };
-
+        Certificate cert = Certificate.FromCppPtr(pcert)!;
         Certificates.Add(cert);
     }
 }

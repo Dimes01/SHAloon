@@ -16,7 +16,8 @@ extern "C" {
     SHALOONAPI Certificate* GetFirstCertificate();
     SHALOONAPI Certificate* GetNextCertificate();
     SHALOONAPI void SignDocument(Certificate* certificate, 
-        const LPTSTR absoluteFilePath, const LPTSTR absoluteSignaturePath);
+        LPCTSTR absoluteFilePath, LPCTSTR absoluteSignaturePath);
+    SHALOONAPI Certificate* VerifySignature(LPCTSTR absoluteFilePath, LPCTSTR absoluteSignaturePath);
 
     SHALOONAPI LPCTSTR GetCertificateSubject(Certificate* certificate);
     SHALOONAPI LPCTSTR GetCertificateIssuer(Certificate* certificate);

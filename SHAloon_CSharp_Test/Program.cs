@@ -18,3 +18,22 @@ for (int i = 0; i < certificates.Count; i++) {
     Console.WriteLine($"Использование до: {certificates[i].NotAfter}");
     Console.WriteLine();
 }
+
+// Если захочется потестить, поменять названия на свои
+
+//string file = @"C:/Users/CryptoProUser/Desktop/Folder/ForSign.txt";
+//string signature = @"C:/Users/CryptoProUser/Desktop/Folder/Signature.p7s";
+
+//IntPtr certPtr = cryptoprovider.VerifySignature(file, signature);
+
+//if (certPtr != IntPtr.Zero) {
+//    Certificate cert = Certificate.FromCppPtr(certPtr)!;
+//    Console.WriteLine("Подпись успешно проверена.");
+//    Console.WriteLine($"Владелец: {cert.SubjectName}");
+//    Console.WriteLine($"Издатель: {cert.IssuerName}");
+//    Console.WriteLine($"Серийный номер: {cert.SerialNumber}");
+//    Console.WriteLine($"Использование до: {cert.NotAfter}");
+//    Console.WriteLine();
+//}
+
+cryptoprovider.Dispose();

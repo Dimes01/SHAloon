@@ -6,6 +6,7 @@ FinishShaloon
 GetFirstCertificate
 GetNextCertificate
 SignDocument
+VerifySignature
 GetCertificateSubject
 GetCertificateIssuer
 GetCertificateSerialNumber

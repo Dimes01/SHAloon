@@ -7,8 +7,6 @@
 
 class CertificateStorage {
 private:
-	const unsigned int certificateEncodingType = PKCS_7_ASN_ENCODING | X509_ASN_ENCODING;
-
 	std::list<Certificate*> mCertificates;
 	std::list<Certificate*>::iterator mCertificatesIterator;
 
@@ -16,12 +14,14 @@ private:
 	// Если список не пуст, очистить список
 	void refillCertificates();
 
-	void parseCertificateInfo(PCCERT_CONTEXT context);
-
 public:
+	const static unsigned int CertificateEncodingType = PKCS_7_ASN_ENCODING | X509_ASN_ENCODING;
+
 	static CertificateStorage* Instance;
 
 	CertificateStorage();
+
+	Certificate* ParseCertificateInfo(PCCERT_CONTEXT context);
 	
 	// Вызов этого метода подразумевает пересканирование сертификатов, поскольку
 	// предполагается, что список сертификатов всегда должен быть актуальным
