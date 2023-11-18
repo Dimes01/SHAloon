@@ -2,99 +2,87 @@
 #include "Certificate.h"
 
 Certificate::Certificate(PCCERT_CONTEXT validPcCertContext) {
-	std::vector<TCHAR> buf;
-
-	DWORD len = CertGetNameString(validPcCertContext, CERT_NAME_FRIENDLY_DISPLAY_TYPE, NULL, NULL, NULL, NULL);
-	if (len) {
-		buf.resize(len);
-		if (CertGetNameString(validPcCertContext, CERT_NAME_FRIENDLY_DISPLAY_TYPE, NULL, NULL, &buf[0], len)) {
-			SetSubject(tstring(buf.begin(), buf.end()));
-		}
-	} else {
-		tstringstream errorCode;
-		errorCode << "WINAPI error code: 0x" << std::hex << GetLastError();
-		Logger::Log(false, TEXT("CertificateStorage::ParseCertificateInfo()"),
-			               TEXT("Error calling CertGetNameString() 1st time for subject"),
-			               errorCode.str(), LogLevel::LOG_WARN);
-	}
-
-	len = CertGetNameString(validPcCertContext, CERT_NAME_FRIENDLY_DISPLAY_TYPE, CERT_NAME_ISSUER_FLAG, NULL, NULL, NULL);
-	if (len) {
-		buf.clear();
-		buf.resize(len);
-		if (CertGetNameString(validPcCertContext, CERT_NAME_FRIENDLY_DISPLAY_TYPE, CERT_NAME_ISSUER_FLAG, NULL, &buf[0], len)) {
-			SetIssuer(tstring(buf.begin(), buf.end()));
-		}
-	} else {
-		tstringstream errorCode;
-		errorCode << "WINAPI error code: 0x" << std::hex << GetLastError();
-		Logger::Log(false, TEXT("CertificateStorage::ParseCertificateInfo()"),
-			               TEXT("Error calling CertGetNameString() 1st time for issuer"),
-			               errorCode.str(), LogLevel::LOG_ERROR);
-	}
-
-	auto fileTimeNotAfter = validPcCertContext->pCertInfo->NotAfter;
-	SYSTEMTIME st;
-
-	FileTimeToSystemTime(&fileTimeNotAfter, &st);
-
-	auto sw = std::setw(2);
-	auto sf = std::setfill(TEXT('0'));
-	tstringstream ss;
-	ss << st.wYear << TEXT("-")
-		<< sw << sf << st.wMonth << TEXT("-")
-		<< sw << sf << st.wDay;
-
-	SetNotAfter(ss.str());
-
-	BYTE* pbSerialNumber = validPcCertContext->pCertInfo->SerialNumber.pbData;
-	DWORD dwSerialNumberSize = validPcCertContext->pCertInfo->SerialNumber.cbData;
-
-	SetSerialNumber(pbSerialNumber, dwSerialNumberSize);
-
-	SetCertContext(validPcCertContext);
+	mCertContext = CertDuplicateCertificateContext(validPcCertContext);
+	setSubject();
+	setIssuer();
+	setNotAfter();
+	setSerialNumber();
 }
 
-void Certificate::SetSubject(const tstring& subject) {
-    mSubject = subject;
+void Certificate::setSubject() {
+	DWORD len = CertGetNameString(mCertContext, CERT_NAME_FRIENDLY_DISPLAY_TYPE, NULL, NULL, NULL, NULL);
+	if (len) {
+		std::vector<TCHAR> buf(len);
+		if (CertGetNameString(mCertContext, CERT_NAME_FRIENDLY_DISPLAY_TYPE, NULL, NULL, &buf[0], len)) {
+			mSubject = buf.data();
+		}
+	} else {
+		tstringstream errorCode;
+		errorCode << "WINAPI error code: 0x" << std::hex << GetLastError();
+		Logger::Log(false, TEXT("Certificate::setSubject()"),
+			TEXT("Error calling CertGetNameString() 1st time for subject"),
+			errorCode.str(), LogLevel::LOG_WARN);
+	}
+}
+
+void Certificate::setIssuer() {
+	DWORD len = CertGetNameString(mCertContext, CERT_NAME_FRIENDLY_DISPLAY_TYPE, CERT_NAME_ISSUER_FLAG, NULL, NULL, NULL);
+	if (len) {
+		std::vector<TCHAR> buf(len);
+		if (CertGetNameString(mCertContext, CERT_NAME_FRIENDLY_DISPLAY_TYPE, CERT_NAME_ISSUER_FLAG, NULL, &buf[0], len)) {
+			mIssuer = buf.data();
+		}
+	} else {
+		tstringstream errorCode;
+		errorCode << "WINAPI error code: 0x" << std::hex << GetLastError();
+		Logger::Log(false, TEXT("Certificate::setIssuer()"),
+			TEXT("Error calling CertGetNameString() 1st time for subject"),
+			errorCode.str(), LogLevel::LOG_WARN);
+	}
+}
+
+void Certificate::setNotAfter() {
+	auto fileTimeNotAfter = mCertContext->pCertInfo->NotAfter;
+	SYSTEMTIME sysTime;
+
+	FileTimeToSystemTime(&fileTimeNotAfter, &sysTime);
+
+	auto setw = std::setw(2);
+	auto setfill = std::setfill(TEXT('0'));
+	tstringstream ss;
+	ss << sysTime.wYear << TEXT("-")
+	   << setw << setfill << sysTime.wMonth << TEXT("-")
+	   << setw << setfill << sysTime.wDay;
+
+	mNotAfter = ss.str();
+}
+
+void Certificate::setSerialNumber() {
+	BYTE* pbSerialNumber = mCertContext->pCertInfo->SerialNumber.pbData;
+	DWORD dwSerialNumberSize = mCertContext->pCertInfo->SerialNumber.cbData;
+    tstringstream ss;
+
+    for (long long i = static_cast<long long>(dwSerialNumberSize) - 1; i >= 0; --i) {
+        ss << std::setw(2) << std::setfill(TEXT('0')) << std::hex << (int)(pbSerialNumber[i]);
+    }
+
+    mSerialNumberString = ss.str();
 }
 
 tstring Certificate::GetSubject() {
     return mSubject;
 }
 
-void Certificate::SetIssuer(const tstring& issuer) {
-    mIssuer = issuer;
-}
-
 tstring Certificate::GetIssuer() {
     return mIssuer;
-}
-
-void Certificate::SetSerialNumber(const BYTE* serialNumber, const DWORD serialNumberSize) {
-    tstringstream ss;
-
-    for (long long i = static_cast<long long>(serialNumberSize) - 1; i >= 0; --i) {
-        ss << std::setw(2) << std::setfill(TEXT('0')) << std::hex << (int)(serialNumber[i]);
-    }
-
-    mSerialNumberString = ss.str();
 }
 
 tstring Certificate::GetSerialNumber() {
     return mSerialNumberString;
 }
 
-void Certificate::SetNotAfter(const tstring& notAfter) {
-    mNotAfter = notAfter;
-}
-
 tstring Certificate::GetNotAfter() {
     return mNotAfter;
-}
-
-void Certificate::SetCertContext(PCCERT_CONTEXT certContext) {
-    mCertContext = CertDuplicateCertificateContext(certContext);
 }
 
 PCCERT_CONTEXT Certificate::GetCertContext() {
