@@ -38,7 +38,7 @@ void CryptoProCSP::SignDocument(Certificate* certificate,
         return;
     }
 
-    DWORD dwDataSize = bData.size();
+    DWORD dwDataSize = static_cast<DWORD>(bData.size());
 
     CRYPT_SIGN_MESSAGE_PARA stSignMessagePara;
 
@@ -100,8 +100,12 @@ Certificate* CryptoProCSP::VerifySignature(LPCTSTR absoluteFilePath, LPCTSTR abs
     verifyParam.cbSize = sizeof(verifyParam);
     verifyParam.dwMsgAndCertEncodingType = CertificateStorage::CertificateEncodingType;
 
-    const BYTE* pbMessage = bFileData.data(), * pbSignature = bSignatureData.data();
-    DWORD dwMessageSize = (DWORD)bFileData.size(), dwSignatureSize = (DWORD)bSignatureData.size();
+    const BYTE* pbMessage = bFileData.data(), 
+              * pbSignature = bSignatureData.data();
+
+    DWORD dwMessageSize = static_cast<DWORD>(bFileData.size()),
+          dwSignatureSize = static_cast<DWORD>(bSignatureData.size());
+
     PCCERT_CONTEXT pcCertContext = NULL;
 
     if (!CryptVerifyDetachedMessageSignature(&verifyParam, 0, pbSignature, dwSignatureSize,

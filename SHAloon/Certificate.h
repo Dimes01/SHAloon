@@ -2,12 +2,16 @@
 
 #include "Logger.h"
 
-constexpr auto CertificateSerialNumberByteFormat = _T("{:02x}");
-constexpr auto CertificateTimeFormat = _T("{}-{:02}-{:02}");
-
 class Certificate
 {
 private:
+
+    // ** or 0*
+    constexpr static auto CertificateSerialNumberByteFormat = _T("{:02x}");
+
+    // YYYY-MM-DD or YYYY-0M-0D
+    constexpr static auto CertificateTimeFormat = _T("{}-{:02}-{:02}");
+
     PCCERT_CONTEXT mCertContext;
 
     tstring mSubject;

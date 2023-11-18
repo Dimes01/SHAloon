@@ -15,9 +15,9 @@ private:
 	void refillCertificates();
 
 public:
-	const static unsigned int CertificateEncodingType = PKCS_7_ASN_ENCODING | X509_ASN_ENCODING;
+	constexpr static unsigned int CertificateEncodingType = PKCS_7_ASN_ENCODING | X509_ASN_ENCODING;
 
-	static CertificateStorage* Instance;
+	static inline CertificateStorage* Instance = nullptr;
 
 	CertificateStorage();
 	

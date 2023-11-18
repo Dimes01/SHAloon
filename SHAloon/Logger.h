@@ -7,11 +7,12 @@ enum class LogLevel {
     LOG_INFO
 };
 
-// YYYY-MM-DD hh:mm:ss
-constexpr auto LogTimeFormat = _T("{:%Y-%m-%d %X}");
-
 class Logger {
 private:
+
+    // YYYY-MM-DD hh:mm:ss
+    constexpr static auto LogTimeFormat = _T("{:%Y-%m-%d %X}");
+
     tstring mSource;
     tstring mSummary;
     tstring mMessage;
@@ -19,28 +20,21 @@ private:
     tstring mLogLevel;
     bool mSuccess;
 
+    void setLogTime();
+    void setLogLevel(LogLevel logLevel);
+
 public:
-    static Logger* Instance;
-    
-    Logger();
+    static inline Logger* Instance = nullptr;
+
+    Logger(bool success, const tstring& source, const tstring& summary,
+        const tstring& message, LogLevel logLevel);
 
     tstring GetLogSource();
-    void SetLogSource(const tstring& source);
-
     tstring GetLogSummary();
-    void SetLogSummary(const tstring& summary);
-
     tstring GetLogMessage();
-    void SetLogMessage(const tstring& message);
-
     tstring GetLogTime();
-    void SetLogTime();
-
     tstring GetLogLevel();
-    void SetLogLevel(LogLevel logLevel);
-
     bool GetLogSuccess();
-    void SetLogSuccess(bool success);
 
     static void Log(bool success, const tstring& source, const tstring& summary, 
         const tstring& message, LogLevel logLevel);

@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "CertificateStorage.h"
 
-CertificateStorage* CertificateStorage::Instance = nullptr;
-
 void CertificateStorage::refillCertificates() {
 	for (auto cert : mCertificates) {
 		if (cert) delete cert;
