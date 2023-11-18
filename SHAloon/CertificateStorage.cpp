@@ -21,16 +21,13 @@ void CertificateStorage::refillCertificates() {
 		return;
 	}
 
-	PCCERT_CONTEXT context = NULL;
+	PCCERT_CONTEXT context = CertEnumCertificatesInStore(hCertStore, NULL);
 
-	do {
+	while (context) {
+		Certificate* cert = new Certificate(context);
+		mCertificates.push_back(cert);
 		context = CertEnumCertificatesInStore(hCertStore, context);
-		Certificate* cert = ParseCertificateInfo(context);
-		if (cert != nullptr) {
-			cert->SetCertContext(CertDuplicateCertificateContext(context));
-			mCertificates.push_back(cert);
-		}
-	} while (context);
+	}
 
 	if (!CertCloseStore(hCertStore, CERT_CLOSE_STORE_CHECK_FLAG)) {
 		tstringstream errorCode;
@@ -39,83 +36,6 @@ void CertificateStorage::refillCertificates() {
 						   TEXT("Error closing certificate store"),
 						   errorCode.str(), LogLevel::LOG_ERROR);
 	}
-}
-
-Certificate* CertificateStorage::ParseCertificateInfo(PCCERT_CONTEXT context) {
-	if (!context) return nullptr;
-
-	tstring subjectName, issuerName;
-
-	DWORD len = CertGetNameString(context, CERT_NAME_FRIENDLY_DISPLAY_TYPE, NULL, NULL, NULL, NULL);
-	if (!len) {
-		tstringstream errorCode;
-		errorCode << "WINAPI error code: 0x" << std::hex << GetLastError();
-		Logger::Log(false, TEXT("CertificateStorage::ParseCertificateInfo()"),
-						   TEXT("Error calling CertGetNameString() for 1st time for subject"),
-						   errorCode.str(), LogLevel::LOG_ERROR);
-		return nullptr;
-	}
-
-	std::vector<TCHAR> buf(len + 1);
-	if (CertGetNameString(context, CERT_NAME_FRIENDLY_DISPLAY_TYPE, NULL, NULL, &buf[0], len)) {
-		subjectName = tstring(buf.begin(), buf.end());
-	} else {
-		tstringstream errorCode;
-		errorCode << "WINAPI error code: 0x" << std::hex << GetLastError();
-		Logger::Log(false, TEXT("CertificateStorage::ParseCertificateInfo()"),
-						   TEXT("Error calling CertGetNameString() for 2nd time for subject"),
-						   errorCode.str(), LogLevel::LOG_ERROR);
-		return nullptr;
-	}
-
-	len = CertGetNameString(context, CERT_NAME_FRIENDLY_DISPLAY_TYPE, CERT_NAME_ISSUER_FLAG, NULL, NULL, NULL);
-	if (!len) {
-		tstringstream errorCode;
-		errorCode << "WINAPI error code: 0x" << std::hex << GetLastError();
-		Logger::Log(false, TEXT("CertificateStorage::ParseCertificateInfo()"),
-					       TEXT("Error calling CertGetNameString() for 1st time for issuer"),
-						   errorCode.str(), LogLevel::LOG_ERROR);
-		return nullptr;
-	}
-	
-	buf.clear();
-	buf.resize(len + 1);
-
-	if (CertGetNameString(context, CERT_NAME_FRIENDLY_DISPLAY_TYPE, CERT_NAME_ISSUER_FLAG, NULL, &buf[0], len)) {
-		issuerName = tstring(buf.begin(), buf.end());
-	} else {
-		tstringstream errorCode;
-		errorCode << "WINAPI error code: 0x" << std::hex << GetLastError();
-		Logger::Log(false, TEXT("CertificateStorage::ParseCertificateInfo()"),
-					       TEXT("Error calling CertGetNameString() for 2nd time for issuer"),
-						   errorCode.str(), LogLevel::LOG_ERROR);
-		return nullptr;
-	}
-
-	auto fileTimeNotAfter = context->pCertInfo->NotAfter;
-	SYSTEMTIME st;
-
-	FileTimeToSystemTime(&fileTimeNotAfter, &st);
-	
-	auto sw = std::setw(2);
-	auto sf = std::setfill(TEXT('0'));
-	tstringstream ss;
-	ss << st.wYear << TEXT("-")
-		<< sw << sf << st.wMonth << TEXT("-")
-		<< sw << sf << st.wDay;
-
-	tstring notAfter(ss.str());
-
-	auto serialNumber = context->pCertInfo->SerialNumber.pbData;
-	auto serialNumberSize = context->pCertInfo->SerialNumber.cbData;
-
-	auto cert = new Certificate();
-	cert->SetIssuer(issuerName);
-	cert->SetSubject(subjectName);
-	cert->SetNotAfter(notAfter);
-	cert->SetSerialNumber(serialNumber, serialNumberSize);
-
-	return cert;
 }
 
 CertificateStorage::CertificateStorage() {}

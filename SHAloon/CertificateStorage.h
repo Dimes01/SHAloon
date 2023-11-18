@@ -20,8 +20,6 @@ public:
 	static CertificateStorage* Instance;
 
 	CertificateStorage();
-
-	Certificate* ParseCertificateInfo(PCCERT_CONTEXT context);
 	
 	// Вызов этого метода подразумевает пересканирование сертификатов, поскольку
 	// предполагается, что список сертификатов всегда должен быть актуальным

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Logger.h"
+
 class Certificate
 {
 private:
@@ -11,7 +13,7 @@ private:
     tstring mNotAfter;
 
 public:
-    Certificate();
+    Certificate(PCCERT_CONTEXT validPcCertContext);
 
     void SetSubject(const tstring& subject);
     tstring GetSubject();

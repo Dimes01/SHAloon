@@ -118,7 +118,7 @@ Certificate* CryptoProCSP::VerifySignature(LPCTSTR absoluteFilePath, LPCTSTR abs
         return nullptr;
     }
 
-    verificationCertificate = CertificateStorage::Instance->ParseCertificateInfo(pcCertContext);
+    verificationCertificate = new Certificate(pcCertContext);
 
     CertFreeCertificateContext(pcCertContext);
 

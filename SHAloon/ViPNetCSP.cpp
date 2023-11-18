@@ -122,7 +122,7 @@ Certificate* ViPNetCSP::VerifySignature(LPCTSTR absoluteFilePath, LPCTSTR absolu
         return nullptr;
     }
 
-    verificationCertificate = CertificateStorage::Instance->ParseCertificateInfo(pcCertContext);
+    verificationCertificate = new Certificate(pcCertContext);
 
     CertFreeCertificateContext(pcCertContext);
 
