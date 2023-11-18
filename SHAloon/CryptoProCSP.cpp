@@ -101,11 +101,11 @@ Certificate* CryptoProCSP::VerifySignature(LPCTSTR absoluteFilePath, LPCTSTR abs
     verifyParam.dwMsgAndCertEncodingType = CertificateStorage::CertificateEncodingType;
 
     const BYTE* pbMessage = bFileData.data(), * pbSignature = bSignatureData.data();
-    DWORD pbMessageSize = (DWORD)bFileData.size(), pbSignatureSize = (DWORD)bSignatureData.size();
+    DWORD dwMessageSize = (DWORD)bFileData.size(), dwSignatureSize = (DWORD)bSignatureData.size();
     PCCERT_CONTEXT pcCertContext = NULL;
 
-    if (!CryptVerifyDetachedMessageSignature(&verifyParam, 0, pbSignature, pbSignatureSize,
-                                             1, &pbMessage, &pbMessageSize, &pcCertContext)) {
+    if (!CryptVerifyDetachedMessageSignature(&verifyParam, 0, pbSignature, dwSignatureSize,
+                                             1, &pbMessage, &dwMessageSize, &pcCertContext)) {
         Logger::WinApiLog(false, TEXT("CryptoProCSP::VerifySignature()"),
                                  TEXT("Error calling CryptVerifyDetachedMessageSignature()"),
                                  LogLevel::LOG_ERROR);

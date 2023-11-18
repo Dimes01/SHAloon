@@ -105,11 +105,11 @@ Certificate* ViPNetCSP::VerifySignature(LPCTSTR absoluteFilePath, LPCTSTR absolu
     verifyParam.dwMsgAndCertEncodingType = CertificateStorage::CertificateEncodingType;
 
     const BYTE* pbMessage = bFileData.data(), * pbSignature = bSignatureData.data();
-    DWORD pbMessageSize = (DWORD)bFileData.size(), pbSignatureSize = (DWORD)bSignatureData.size();
+    DWORD dwMessageSize = (DWORD)bFileData.size(), dwSignatureSize = (DWORD)bSignatureData.size();
     PCCERT_CONTEXT pcCertContext = NULL;
 
-    if (!CryptVerifyDetachedMessageSignature(&verifyParam, 0, pbSignature, pbSignatureSize,
-                                             1, &pbMessage, &pbMessageSize, &pcCertContext)) {
+    if (!CryptVerifyDetachedMessageSignature(&verifyParam, 0, pbSignature, dwSignatureSize,
+                                             1, &pbMessage, &dwMessageSize, &pcCertContext)) {
         Logger::WinApiLog(false, TEXT("ViPNetCSP::VerifySignature()"),
                                  TEXT("Error calling CryptVerifyDetachedMessageSignature()"),
                                  LogLevel::LOG_ERROR);
