@@ -18,8 +18,8 @@ void Certificate::setSubject() {
 		}
 	} else {
 		Logger::WinApiLog(false, TEXT("Certificate::setSubject()"),
-			                     TEXT("Error calling CertGetNameString() 1st time for subject"), 
-			                     LogLevel::LOG_WARN)
+			                     TEXT("Error calling CertGetNameString() 1st time for subject"),
+			                     LogLevel::LOG_WARN);
 	}
 }
 
