@@ -58,11 +58,9 @@ void CryptoProCSP::SignDocument(Certificate* certificate,
     DWORD dwSignatureSize = 0;
 
     if (!CryptSignMessage(&stSignMessagePara, TRUE, 1, &pcbMessage, &dwDataSize, NULL, &dwSignatureSize)) {
-        tstringstream errorCode;
-        errorCode << "WINAPI error code: 0x" << std::hex << GetLastError();
-        Logger::Log(false, TEXT("CryptoProCSP::SignDocument()"),
-            TEXT("Error calling CryptSignMessage() for 1st time"),
-            errorCode.str(), LogLevel::LOG_ERROR);
+        Logger::WinApiLog(false, TEXT("CryptoProCSP::SignDocument()"),
+                                 TEXT("Error calling CryptSignMessage() for 1st time"),
+                                 LogLevel::LOG_ERROR);
         return;
     }
 
@@ -70,11 +68,9 @@ void CryptoProCSP::SignDocument(Certificate* certificate,
     BYTE* pcbSignData = bSignData.data();
 
     if (!CryptSignMessage(&stSignMessagePara, TRUE, 1, &pcbMessage, &dwDataSize, pcbSignData, &dwSignatureSize)) {
-        tstringstream errorCode;
-        errorCode << "WINAPI error code: 0x" << std::hex << GetLastError();
-        Logger::Log(false, TEXT("CryptoProCSP::SignDocument()"),
-            TEXT("Error calling CryptSignMessage() for 2nd time"),
-            errorCode.str(), LogLevel::LOG_ERROR);
+        Logger::WinApiLog(false, TEXT("CryptoProCSP::SignDocument()"),
+                                 TEXT("Error calling CryptSignMessage() for 2nd time"),
+                                 LogLevel::LOG_ERROR);
         return;
     }
 
@@ -110,11 +106,9 @@ Certificate* CryptoProCSP::VerifySignature(LPCTSTR absoluteFilePath, LPCTSTR abs
 
     if (!CryptVerifyDetachedMessageSignature(&verifyParam, 0, pbSignature, pbSignatureSize,
                                              1, &pbMessage, &pbMessageSize, &pcCertContext)) {
-        tstringstream errorCode;
-        errorCode << "WINAPI error code: 0x" << std::hex << GetLastError();
-        Logger::Log(false, TEXT("CryptoProCSP::VerifySignature()"),
-            TEXT("Error calling CryptVerifyDetachedMessageSignature()"),
-            errorCode.str(), LogLevel::LOG_ERROR);
+        Logger::WinApiLog(false, TEXT("CryptoProCSP::VerifySignature()"),
+                                 TEXT("Error calling CryptVerifyDetachedMessageSignature()"),
+                                 LogLevel::LOG_ERROR);
         return nullptr;
     }
 

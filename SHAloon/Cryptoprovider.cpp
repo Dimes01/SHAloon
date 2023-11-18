@@ -9,11 +9,10 @@ bool Cryptoprovider::getFileData(LPCTSTR szFile, std::vector<BYTE>& bData) {
 	auto fileSize = fs::file_size(filePath, errorCode);
 
 	if (errorCode.value() != 0) {
-		tstringstream errorCodeStr;
-		errorCodeStr << "Error code: 0x" << std::hex << errorCode.value();
-		tstring message = TEXT("Error getting size of file \"") + tstring(szFile) + TEXT("\"");
-		Logger::Log(false, TEXT("Cryptoprovider::getFileData()"),
-			               message, errorCodeStr.str(), LogLevel::LOG_ERROR);
+		SetLastError(errorCode.value());
+		tstring summary = TEXT("Error getting size of file \"") + tstring(szFile) + TEXT("\"");
+		Logger::WinApiLog(false, TEXT("Cryptoprovider::getFileData()"),
+			                     summary, LogLevel::LOG_ERROR);
 		return false;
 	}
 
@@ -39,7 +38,7 @@ bool Cryptoprovider::saveDataToFile(LPCTSTR szFile, const std::vector<BYTE>& bDa
 	if (file.is_open() == false) {
 		tstring message = TEXT("Error opening file \"") + tstring(szFile) + TEXT("\" for writing");
 		Logger::Log(false, TEXT("Cryptoprovider::saveDataToFile()"),
-			message, TEXT(""), LogLevel::LOG_ERROR);
+			               message, TEXT(""), LogLevel::LOG_ERROR);
 		return false;
 	}
 

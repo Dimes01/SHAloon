@@ -62,11 +62,9 @@ void ViPNetCSP::SignDocument(Certificate* certificate,
     BOOL freeProv = FALSE;
 
     if (!CryptSignMessage(&stSignMessagePara, TRUE, 1, &pcbMessage, &dwDataSize, NULL, &dwSignatureSize)) {
-        tstringstream errorCode;
-        errorCode << "WINAPI error code: 0x" << std::hex << GetLastError();
-        Logger::Log(false, TEXT("ViPNetCSP::SignDocument()"),
-            TEXT("Error calling CryptSignMessage() for 1st time"),
-            errorCode.str(), LogLevel::LOG_ERROR);
+        Logger::WinApiLog(false, TEXT("ViPNetCSP::SignDocument()"),
+                                 TEXT("Error calling CryptSignMessage() for 1st time"),
+                                 LogLevel::LOG_ERROR);
         return;
     }
     
@@ -74,11 +72,9 @@ void ViPNetCSP::SignDocument(Certificate* certificate,
     BYTE* pcbSignData = bSignData.data();
 
     if (!CryptSignMessage(&stSignMessagePara, TRUE, 1, &pcbMessage, &dwDataSize, pcbSignData, &dwSignatureSize)) {
-        tstringstream errorCode;
-        errorCode << "WINAPI error code: 0x" << std::hex << GetLastError();
-        Logger::Log(false, TEXT("ViPNetCSP::SignDocument()"),
-            TEXT("Error calling CryptSignMessage() for 2nd time"),
-            errorCode.str(), LogLevel::LOG_ERROR);
+        Logger::WinApiLog(false, TEXT("ViPNetCSP::SignDocument()"),
+                                 TEXT("Error calling CryptSignMessage() for 2nd time"),
+                                 LogLevel::LOG_ERROR);
         return;
     }
 
@@ -114,11 +110,9 @@ Certificate* ViPNetCSP::VerifySignature(LPCTSTR absoluteFilePath, LPCTSTR absolu
 
     if (!CryptVerifyDetachedMessageSignature(&verifyParam, 0, pbSignature, pbSignatureSize,
                                              1, &pbMessage, &pbMessageSize, &pcCertContext)) {
-        tstringstream errorCode;
-        errorCode << "WINAPI error code: 0x" << std::hex << GetLastError();
-        Logger::Log(false, TEXT("ViPNetCSP::VerifySignature()"),
-            TEXT("Error calling CryptVerifyDetachedMessageSignature()"),
-            errorCode.str(), LogLevel::LOG_ERROR);
+        Logger::WinApiLog(false, TEXT("ViPNetCSP::VerifySignature()"),
+                                 TEXT("Error calling CryptVerifyDetachedMessageSignature()"),
+                                 LogLevel::LOG_ERROR);
         return nullptr;
     }
 

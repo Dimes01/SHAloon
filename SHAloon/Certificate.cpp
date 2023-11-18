@@ -17,11 +17,9 @@ void Certificate::setSubject() {
 			mSubject = buf.data();
 		}
 	} else {
-		tstringstream errorCode;
-		errorCode << "WINAPI error code: 0x" << std::hex << GetLastError();
-		Logger::Log(false, TEXT("Certificate::setSubject()"),
-			TEXT("Error calling CertGetNameString() 1st time for subject"),
-			errorCode.str(), LogLevel::LOG_WARN);
+		Logger::WinApiLog(false, TEXT("Certificate::setSubject()"),
+			                     TEXT("Error calling CertGetNameString() 1st time for subject"), 
+			                     LogLevel::LOG_WARN)
 	}
 }
 
@@ -33,11 +31,9 @@ void Certificate::setIssuer() {
 			mIssuer = buf.data();
 		}
 	} else {
-		tstringstream errorCode;
-		errorCode << "WINAPI error code: 0x" << std::hex << GetLastError();
-		Logger::Log(false, TEXT("Certificate::setIssuer()"),
-			TEXT("Error calling CertGetNameString() 1st time for subject"),
-			errorCode.str(), LogLevel::LOG_WARN);
+		Logger::WinApiLog(false, TEXT("Certificate::setIssuer()"),
+			                     TEXT("Error calling CertGetNameString() 1st time for issuer"),
+			                     LogLevel::LOG_WARN);
 	}
 }
 

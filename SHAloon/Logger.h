@@ -44,4 +44,7 @@ public:
 
     static void Log(bool success, const tstring& source, const tstring& summary, 
         const tstring& message, LogLevel logLevel);
+
+    // message достаётся из GetLastError()
+    static void WinApiLog(bool success, const tstring& source, const tstring& summary, LogLevel logLevel);
 };

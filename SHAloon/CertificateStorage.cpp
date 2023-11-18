@@ -13,11 +13,8 @@ void CertificateStorage::refillCertificates() {
 		CERT_SYSTEM_STORE_CURRENT_USER, TEXT("MY"));
 
 	if (!hCertStore) {
-		tstringstream errorCode;
-		errorCode << "WINAPI error code: 0x" << std::hex << GetLastError();
-		Logger::Log(false, TEXT("CertificateStorage::refillCertificates()"),
-						   TEXT("Error opening certificate store"),
-						   errorCode.str(), LogLevel::LOG_ERROR);
+		Logger::WinApiLog(false, TEXT("CertificateStorage::refillCertificates()"),
+			                     TEXT("Error opening certificate store"), LogLevel::LOG_ERROR);
 		return;
 	}
 
@@ -30,11 +27,8 @@ void CertificateStorage::refillCertificates() {
 	}
 
 	if (!CertCloseStore(hCertStore, CERT_CLOSE_STORE_CHECK_FLAG)) {
-		tstringstream errorCode;
-		errorCode << "WINAPI error code: 0x" << std::hex << GetLastError();
-		Logger::Log(false, TEXT("CertificateStorage::refillCertificates()"),
-						   TEXT("Error closing certificate store"),
-						   errorCode.str(), LogLevel::LOG_ERROR);
+		Logger::WinApiLog(false, TEXT("CertificateStorage::refillCertificates()"),
+			                     TEXT("Error closing certificate store"), LogLevel::LOG_ERROR);
 	}
 }
 

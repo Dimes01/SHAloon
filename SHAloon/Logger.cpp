@@ -67,3 +67,9 @@ void Logger::Log(bool success, const tstring& source, const tstring& summary,
     Instance->SetLogMessage(message);
     Instance->SetLogLevel(logLevel);
 }
+
+void Logger::WinApiLog(bool success, const tstring& source, const tstring& summary, LogLevel logLevel) {
+    tstringstream errorCode;
+    errorCode << TEXT("WINAPI error code: 0x") << std::hex << GetLastError();
+    Log(success, source, summary, errorCode.str(), logLevel);
+}
