@@ -13,8 +13,8 @@ void CertificateStorage::refillCertificates() {
 		CERT_SYSTEM_STORE_CURRENT_USER, TEXT("MY"));
 
 	if (!hCertStore) {
-		Logger::WinApiLog(false, TEXT("CertificateStorage::refillCertificates()"),
-			                     TEXT("Error opening certificate store"), LogLevel::LOG_ERROR);
+		Logger::WinApiLog(false, _T("CertificateStorage::refillCertificates()"),
+			                     _T("Error opening certificate store"), LogLevel::LOG_ERROR);
 		return;
 	}
 
@@ -27,8 +27,8 @@ void CertificateStorage::refillCertificates() {
 	}
 
 	if (!CertCloseStore(hCertStore, CERT_CLOSE_STORE_CHECK_FLAG)) {
-		Logger::WinApiLog(false, TEXT("CertificateStorage::refillCertificates()"),
-			                     TEXT("Error closing certificate store"), LogLevel::LOG_ERROR);
+		Logger::WinApiLog(false, _T("CertificateStorage::refillCertificates()"),
+			                     _T("Error closing certificate store"), LogLevel::LOG_ERROR);
 	}
 }
 
@@ -38,8 +38,8 @@ Certificate* CertificateStorage::GetFirstCertificate() {
 	refillCertificates();
 	mCertificatesIterator = mCertificates.begin();
 	if (mCertificatesIterator == mCertificates.end()) {
-		Logger::Log(false, TEXT("CertificateStorage::GetFirstCertificate()"),
-						   TEXT("Certificates list is empty"), TEXT(""), LogLevel::LOG_WARN);
+		Logger::Log(false, _T("CertificateStorage::GetFirstCertificate()"),
+						   _T("Certificates list is empty"), tstring(), LogLevel::LOG_WARN);
 		return nullptr;
 	}
 	return *mCertificatesIterator;

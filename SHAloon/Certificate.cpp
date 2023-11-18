@@ -17,8 +17,8 @@ void Certificate::setSubject() {
 			mSubject = buf.data();
 		}
 	} else {
-		Logger::WinApiLog(false, TEXT("Certificate::setSubject()"),
-			                     TEXT("Error calling CertGetNameString() 1st time for subject"),
+		Logger::WinApiLog(false, _T("Certificate::setSubject()"),
+			                     _T("Error calling CertGetNameString() 1st time for subject"),
 			                     LogLevel::LOG_WARN);
 	}
 }
@@ -31,8 +31,8 @@ void Certificate::setIssuer() {
 			mIssuer = buf.data();
 		}
 	} else {
-		Logger::WinApiLog(false, TEXT("Certificate::setIssuer()"),
-			                     TEXT("Error calling CertGetNameString() 1st time for issuer"),
+		Logger::WinApiLog(false, _T("Certificate::setIssuer()"),
+			                     _T("Error calling CertGetNameString() 1st time for issuer"),
 			                     LogLevel::LOG_WARN);
 	}
 }
@@ -43,23 +43,16 @@ void Certificate::setNotAfter() {
 
 	FileTimeToSystemTime(&fileTimeNotAfter, &sysTime);
 
-	auto setw = std::setw(2);
-	auto setfill = std::setfill(TEXT('0'));
-	tstringstream ss;
-	ss << sysTime.wYear << TEXT("-")
-	   << setw << setfill << sysTime.wMonth << TEXT("-")
-	   << setw << setfill << sysTime.wDay;
-
-	mNotAfter = ss.str();
+	mNotAfter = std::format(CertificateTimeFormat, sysTime.wYear, sysTime.wMonth, sysTime.wDay);
 }
 
 void Certificate::setSerialNumber() {
 	BYTE* pbSerialNumber = mCertContext->pCertInfo->SerialNumber.pbData;
-	DWORD dwSerialNumberSize = mCertContext->pCertInfo->SerialNumber.cbData;
+	long long serialNumberSize = static_cast<long long>(mCertContext->pCertInfo->SerialNumber.cbData);
     tstringstream ss;
 
-    for (long long i = static_cast<long long>(dwSerialNumberSize) - 1; i >= 0; --i) {
-        ss << std::setw(2) << std::setfill(TEXT('0')) << std::hex << (int)(pbSerialNumber[i]);
+    for (long long i = serialNumberSize - 1; i >= 0; --i) {
+		ss << std::format(CertificateSerialNumberByteFormat, (int)(pbSerialNumber[i]));
     }
 
     mSerialNumberString = ss.str();

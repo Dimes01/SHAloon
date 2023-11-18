@@ -10,9 +10,10 @@ bool Cryptoprovider::getFileData(LPCTSTR szFile, std::vector<BYTE>& bData) {
 
 	if (errorCode.value() != 0) {
 		SetLastError(errorCode.value());
-		tstring summary = TEXT("Error getting size of file \"") + tstring(szFile) + TEXT("\"");
-		Logger::WinApiLog(false, TEXT("Cryptoprovider::getFileData()"),
-			                     summary, LogLevel::LOG_ERROR);
+		tstringstream summary;
+		summary << _T("Error getting size of file \"") << szFile << _T("\"");
+		Logger::WinApiLog(false, _T("Cryptoprovider::getFileData()"),
+			                     summary.str(), LogLevel::LOG_ERROR);
 		return false;
 	}
 
@@ -20,9 +21,10 @@ bool Cryptoprovider::getFileData(LPCTSTR szFile, std::vector<BYTE>& bData) {
 
 	std::ifstream file(szFile, std::ios::binary);
 	if (file.is_open() == false) {
-		tstring message = TEXT("Error opening file \"") + tstring(szFile) + TEXT("\" for reading");
-		Logger::Log(false, TEXT("Cryptoprovider::getFileData()"),
-			               message, TEXT(""), LogLevel::LOG_ERROR);
+		tstringstream message;
+		message << _T("Error opening file \"") << szFile << _T("\" for reading");
+		Logger::Log(false, _T("Cryptoprovider::getFileData()"),
+			               message.str(), tstring(), LogLevel::LOG_ERROR);
 		return false;
 	}
 
@@ -36,9 +38,10 @@ bool Cryptoprovider::saveDataToFile(LPCTSTR szFile, const std::vector<BYTE>& bDa
 	std::ofstream file(szFile, std::ios::binary);
 
 	if (file.is_open() == false) {
-		tstring message = TEXT("Error opening file \"") + tstring(szFile) + TEXT("\" for writing");
-		Logger::Log(false, TEXT("Cryptoprovider::saveDataToFile()"),
-			               message, TEXT(""), LogLevel::LOG_ERROR);
+		tstringstream message;
+		message << _T("Error opening file \"") << szFile << _T("\" for writing");
+		Logger::Log(false, _T("Cryptoprovider::saveDataToFile()"),
+			               message.str(), tstring(), LogLevel::LOG_ERROR);
 		return false;
 	}
 

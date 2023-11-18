@@ -2,6 +2,9 @@
 
 #include "Logger.h"
 
+constexpr auto CertificateSerialNumberByteFormat = _T("{:02x}");
+constexpr auto CertificateTimeFormat = _T("{}-{:02}-{:02}");
+
 class Certificate
 {
 private:

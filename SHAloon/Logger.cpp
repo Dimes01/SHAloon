@@ -43,11 +43,11 @@ tstring Logger::GetLogLevel() {
 }
 
 void Logger::SetLogLevel(LogLevel logLevel) {
-    if (logLevel == LogLevel::LOG_FATAL) mLogLevel = TEXT("FATAL");
-    else if (logLevel == LogLevel::LOG_ERROR) mLogLevel = TEXT("ERROR");
-    else if (logLevel == LogLevel::LOG_WARN) mLogLevel = TEXT("WARN");
-    else if (logLevel == LogLevel::LOG_INFO) mLogLevel = TEXT("INFO");
-    else mLogLevel = TEXT("INFO");
+    if (logLevel == LogLevel::LOG_FATAL) mLogLevel = _T("FATAL");
+    else if (logLevel == LogLevel::LOG_ERROR) mLogLevel = _T("ERROR");
+    else if (logLevel == LogLevel::LOG_WARN) mLogLevel = _T("WARN");
+    else if (logLevel == LogLevel::LOG_INFO) mLogLevel = _T("INFO");
+    else mLogLevel = _T("INFO");
 }
 
 bool Logger::GetLogSuccess() {
@@ -69,7 +69,6 @@ void Logger::Log(bool success, const tstring& source, const tstring& summary,
 }
 
 void Logger::WinApiLog(bool success, const tstring& source, const tstring& summary, LogLevel logLevel) {
-    tstringstream errorCode;
-    errorCode << TEXT("WINAPI error code: 0x") << std::hex << GetLastError();
-    Log(success, source, summary, errorCode.str(), logLevel);
+    tstring errorCode = std::format(_T("WINAPI error code: 0x{:x}"), GetLastError());
+    Log(success, source, summary, errorCode, logLevel);
 }

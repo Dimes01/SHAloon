@@ -8,7 +8,7 @@ enum class LogLevel {
 };
 
 // YYYY-MM-DD hh:mm:ss
-constexpr auto LogTimeFormat = TEXT("{:%Y-%m-%d %X}");
+constexpr auto LogTimeFormat = _T("{:%Y-%m-%d %X}");
 
 class Logger {
 private:

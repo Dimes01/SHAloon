@@ -13,7 +13,6 @@
 #include <list>
 #include <sstream>
 #include <tchar.h>
-#include <iomanip>
 #include <wincrypt.h>
 #include <chrono>
 #include <format>
