@@ -131,7 +131,7 @@
       <AdditionalDependencies>crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)$(Platform)\$(Configuration)\" "$(SolutionDir)SHAloon_CSharp\bin\$(Configuration)\net7.0\" /s /i /y &amp; xcopy "$(SolutionDir)$(Platform)\$(Configuration)\" "$(SolutionDir)SHAloon_CSharp_Test\bin\$(Configuration)\net7.0\" /s /i /y</Command>
+      <Command>xcopy "$(SolutionDir)$(Platform)\$(Configuration)\" "$(SolutionDir)SHAloon_CSharp\cpplib\" /s /i /y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -157,7 +157,7 @@
       <AdditionalDependencies>crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)$(Platform)\$(Configuration)\" "$(SolutionDir)SHAloon_CSharp\bin\$(Configuration)\net7.0\" /s /i /y &amp; xcopy "$(SolutionDir)$(Platform)\$(Configuration)\" "$(SolutionDir)SHAloon_CSharp_Test\bin\$(Configuration)\net7.0\" /s /i /y</Command>
+      <Command>xcopy "$(SolutionDir)$(Platform)\$(Configuration)\" "$(SolutionDir)SHAloon_CSharp\cpplib\" /s /i /y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

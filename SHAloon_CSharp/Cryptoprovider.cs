@@ -10,18 +10,24 @@ public class Cryptoprovider : IDisposable {
 
     public Cryptoprovider() {
         ImportsDLL.InitShaloon();
-        CertificateStorage.getAllCertificates();
     }
 
     #endregion
     #region Методы
 
-    public void SignDocument(IntPtr cert, string absoluteFilePath, string absoluteSignaturePath) { 
-        ImportsDLL.SignDocument(cert, absoluteFilePath, absoluteSignaturePath);
+    public void GetAllCertificates() {
+        CertificateStorage.getAllCertificates();
     }
-    public IntPtr VerifySignature(string absoluteFilePath, string absoluteSignaturePath) {
-        return ImportsDLL.VerifySignature(absoluteFilePath, absoluteSignaturePath);
+
+    public void SignDocument(Certificate cert, string absoluteFilePath, string absoluteSignaturePath) { 
+        ImportsDLL.SignDocument(cert.CppPointer, absoluteFilePath, absoluteSignaturePath);
     }
+
+    public Certificate? VerifySignature(string absoluteFilePath, string absoluteSignaturePath) {
+        var pcert = ImportsDLL.VerifySignature(absoluteFilePath, absoluteSignaturePath);
+        return Certificate.FromCppPtr(pcert);
+    }
+
     public void EncodeDocument() { }
     public void DecodeDocument() { }
 

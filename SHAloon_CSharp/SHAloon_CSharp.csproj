@@ -7,4 +7,27 @@
     <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="cpplib\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="cpplib\SHAloon.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="cpplib\SHAloon.exp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="cpplib\SHAloon.lib">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="cpplib\SHAloon.pdb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy &quot;$(SolutionDir)$(AssemblyName)\$(OutputPath)\&quot; &quot;$(SolutionDir)..\SHAloonDemo\SHAloonDemo\csharplib\&quot;  /s /i /y" />
+  </Target>
+
 </Project>

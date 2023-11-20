@@ -3,7 +3,7 @@
 namespace SHAloon_CSharp;
 
 internal static class ImportsDLL {
-    internal const string path_to_dll_cryptoprovider = "SHAloon.dll";
+    internal const string path_to_dll_cryptoprovider = "cpplib\\SHAloon.dll";
 
     [DllImport(path_to_dll_cryptoprovider, CallingConvention = CallingConvention.Cdecl)]
     internal static extern void InitShaloon();
