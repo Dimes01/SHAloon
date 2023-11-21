@@ -34,4 +34,10 @@ internal static class ImportsDLL {
 
     [DllImport(path_to_dll_cryptoprovider, CharSet=CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
     internal static extern IntPtr VerifySignature(string absoluteFileName, string absoluteSignatureName);
+
+    [DllImport(path_to_dll_cryptoprovider, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern void EncryptDocument(IntPtr cert, string absoluteSourcePath, string absoluteEncryptedPath);
+
+    [DllImport(path_to_dll_cryptoprovider, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern void DecryptDocument(string absoluteEncryptedPath, string absoluteDecryptedPath);
 }

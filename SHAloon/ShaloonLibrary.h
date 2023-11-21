@@ -13,11 +13,15 @@ Cryptoprovider* cryptoprovider;
 extern "C" {
     SHALOONAPI void InitShaloon();
     SHALOONAPI void FinishShaloon();
+
     SHALOONAPI Certificate* GetFirstCertificate();
     SHALOONAPI Certificate* GetNextCertificate();
-    SHALOONAPI void SignDocument(Certificate* certificate, 
-        LPCTSTR absoluteFilePath, LPCTSTR absoluteSignaturePath);
+
+    SHALOONAPI void SignDocument(Certificate* certificate, LPCTSTR absoluteFilePath, LPCTSTR absoluteSignaturePath);
     SHALOONAPI Certificate* VerifySignature(LPCTSTR absoluteFilePath, LPCTSTR absoluteSignaturePath);
+
+    SHALOONAPI void EncryptDocument(Certificate* certificate, LPCTSTR absoluteSourcePath, LPCTSTR absoluteEncryptedPath);
+    SHALOONAPI void DecryptDocument(LPCTSTR absoluteEncryptedPath, LPCTSTR absoluteDecryptedPath);
 
     SHALOONAPI LPCTSTR GetCertificateSubject(Certificate* certificate);
     SHALOONAPI LPCTSTR GetCertificateIssuer(Certificate* certificate);
