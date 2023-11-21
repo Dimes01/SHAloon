@@ -24,10 +24,13 @@ public:
 
     bool IsInitialized();
 
-    virtual void SignDocument(Certificate* certificate, 
-        LPCTSTR absoluteFilePath, LPCTSTR absoluteSignaturePath) = 0;
+    virtual void SignDocument(Certificate* certificate, LPCTSTR absoluteFilePath, LPCTSTR absoluteSignaturePath) = 0;
 
     virtual Certificate* VerifySignature(LPCTSTR absoluteFilePath, LPCTSTR absoluteSignaturePath) = 0;
+
+    virtual void EncryptDocument(Certificate* certificate, LPCTSTR absoluteSourcePath, LPCTSTR absoluteEncryptedPath) = 0;
+
+    virtual void DecryptDocument(LPCTSTR absoluteEncryptedPath, LPCTSTR absoluteDecryptedPath) = 0;
 
     virtual ~Cryptoprovider();
 };

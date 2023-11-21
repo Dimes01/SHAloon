@@ -38,8 +38,17 @@ void SignDocument(Certificate* certificate,
     cryptoprovider->SignDocument(certificate, absoluteFilePath, absoluteSignaturePath);
 }
 
-SHALOONAPI Certificate* VerifySignature(LPCTSTR absoluteFilePath, LPCTSTR absoluteSignaturePath) {
+Certificate* VerifySignature(LPCTSTR absoluteFilePath, LPCTSTR absoluteSignaturePath) {
     return cryptoprovider->VerifySignature(absoluteFilePath, absoluteSignaturePath);
+}
+
+
+void EncryptDocument(Certificate* certificate, LPCTSTR absoluteSourcePath, LPCTSTR absoluteEncryptedPath) {
+    cryptoprovider->EncryptDocument(certificate, absoluteSourcePath, absoluteEncryptedPath);
+}
+
+void DecryptDocument(LPCTSTR absoluteEncryptedPath, LPCTSTR absoluteDecryptedPath) {
+    cryptoprovider->DecryptDocument(absoluteEncryptedPath, absoluteDecryptedPath);
 }
 
 

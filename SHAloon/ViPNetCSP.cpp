@@ -127,6 +127,14 @@ Certificate* ViPNetCSP::VerifySignature(LPCTSTR absoluteFilePath, LPCTSTR absolu
     return verificationCertificate;
 }
 
+void ViPNetCSP::EncryptDocument(Certificate* certificate, LPCTSTR absoluteSourcePath, LPCTSTR absoluteEncryptedPath) {
+    
+}
+
+void ViPNetCSP::DecryptDocument(LPCTSTR absoluteEncryptedPath, LPCTSTR absoluteDecryptedPath) {
+    
+}
+
 ViPNetCSP::~ViPNetCSP() {
 
 }
