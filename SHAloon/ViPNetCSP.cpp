@@ -128,11 +128,99 @@ Certificate* ViPNetCSP::VerifySignature(LPCTSTR absoluteFilePath, LPCTSTR absolu
 }
 
 void ViPNetCSP::EncryptDocument(Certificate* certificate, LPCTSTR absoluteSourcePath, LPCTSTR absoluteEncryptedPath) {
-    
+    std::vector<BYTE> bFileData, bEncryptedFileData;
+
+    if (!getFileData(absoluteSourcePath, bFileData)) {
+        return;
+    }
+
+    CRYPT_ENCRYPT_MESSAGE_PARA encryptParam;
+    ZeroMemory(&encryptParam, sizeof(encryptParam));
+    encryptParam.cbSize = sizeof(encryptParam);
+    encryptParam.dwMsgEncodingType = CertificateStorage::CertificateEncodingType;
+    encryptParam.ContentEncryptionAlgorithm.pszObjId = (LPSTR)szOID_CPCSP_ENCRYPT_ALG; // GOST 28147-89
+
+    DWORD dwEncryptedFileDataSize = 0;
+    DWORD dwFileDataSize = (DWORD)bFileData.size();
+    const BYTE* pcbFileData = bFileData.data();
+    PCCERT_CONTEXT certContext = certificate->GetCertContext();
+
+    if (!CryptEncryptMessage(&encryptParam, 1, &certContext, pcbFileData, dwFileDataSize,
+        NULL, &dwEncryptedFileDataSize))
+    {
+        Logger::WinApiLog(false, _T("ViPNetCSP::EncryptDocument()"),
+                                 _T("Error calling CryptEncryptMessage() for 1st time"),
+                                 LogLevel::LOG_ERROR);
+    }
+
+    bEncryptedFileData.resize(dwEncryptedFileDataSize);
+
+    if (!CryptEncryptMessage(&encryptParam, 1, &certContext, pcbFileData, dwFileDataSize,
+        bEncryptedFileData.data(), &dwEncryptedFileDataSize))
+    {
+        Logger::WinApiLog(false, _T("ViPNetCSP::EncryptDocument()"),
+                                 _T("Error calling CryptEncryptMessage() for 2nd time"),
+                                 LogLevel::LOG_ERROR);
+    }
+
+    if (!saveDataToFile(absoluteEncryptedPath, bEncryptedFileData)) {
+        return;
+    }
 }
 
 void ViPNetCSP::DecryptDocument(LPCTSTR absoluteEncryptedPath, LPCTSTR absoluteDecryptedPath) {
-    
+    std::vector<BYTE> bEncryptedFileData, bDecryptedFileData;
+
+    if (!getFileData(absoluteEncryptedPath, bEncryptedFileData)) {
+        return;
+    }
+
+    HCERTSTORE hCertStore = CertOpenStore(CERT_STORE_PROV_SYSTEM, CertificateStorage::CertificateEncodingType, 0,
+        CERT_SYSTEM_STORE_CURRENT_USER, TEXT("MY"));
+
+    if (!hCertStore) {
+        Logger::WinApiLog(false, _T("ViPNetCSP::DecryptDocument()"),
+                                 _T("Error opening certificate store"), LogLevel::LOG_ERROR);
+        return;
+    }
+
+    DWORD dwEncryptedFileDataSize = (DWORD)bEncryptedFileData.size();
+    DWORD dwDecryptedFileDataSize = 0;
+    const BYTE* pcbEncryptedFileData = bEncryptedFileData.data();
+
+    CRYPT_DECRYPT_MESSAGE_PARA decryptParam;
+    ZeroMemory(&decryptParam, sizeof(decryptParam));
+    decryptParam.cbSize = sizeof(decryptParam);
+    decryptParam.dwMsgAndCertEncodingType = CertificateStorage::CertificateEncodingType;
+    decryptParam.cCertStore = 1;
+    decryptParam.rghCertStore = &hCertStore;
+
+    if (!CryptDecryptMessage(&decryptParam, pcbEncryptedFileData, dwEncryptedFileDataSize,
+        NULL, &dwDecryptedFileDataSize, NULL))
+    {
+        Logger::WinApiLog(false, _T("ViPNetCSP::DecryptDocument()"),
+                                 _T("Error calling CryptDecryptMessage() for 1st time"),
+                                 LogLevel::LOG_ERROR);
+    }
+
+    bDecryptedFileData.resize(dwDecryptedFileDataSize);
+
+    if (!CryptDecryptMessage(&decryptParam, pcbEncryptedFileData, dwEncryptedFileDataSize,
+        bDecryptedFileData.data(), &dwDecryptedFileDataSize, NULL))
+    {
+        Logger::WinApiLog(false, _T("ViPNetCSP::DecryptDocument()"),
+                                 _T("Error calling CryptDecryptMessage() for 2nd time"),
+                                 LogLevel::LOG_ERROR);
+    }
+
+    if (!CertCloseStore(hCertStore, CERT_CLOSE_STORE_CHECK_FLAG)) {
+        Logger::WinApiLog(false, _T("ViPNetCSP::DecryptDocument()"),
+                                 _T("Error closing certificate store"), LogLevel::LOG_ERROR);
+    }
+
+    if (!saveDataToFile(absoluteDecryptedPath, bDecryptedFileData)) {
+        return;
+    }
 }
 
 ViPNetCSP::~ViPNetCSP() {
