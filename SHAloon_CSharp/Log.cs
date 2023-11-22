@@ -1,6 +1,6 @@
 ﻿namespace SHAloon_CSharp;
 
-internal class Log {
+public class Log {
     public bool Success { get; set; }
     public string Source { get; set; } = string.Empty;
     public string Summary { get; set; } = string.Empty;
