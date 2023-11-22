@@ -7,6 +7,8 @@
 
 class CertificateStorage {
 private:
+	HCERTSTORE hCertStore = NULL;
+
 	std::list<Certificate*> mCertificates;
 	std::list<Certificate*>::iterator mCertificatesIterator;
 

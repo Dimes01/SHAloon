@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy &quot;$(SolutionDir)$(AssemblyName)\$(OutputPath)\&quot; &quot;$(SolutionDir)..\SHAloonDemo\SHAloonDemo\csharplib\&quot;  /s /i /y" />
+    <Exec Command="xcopy &quot;$(SolutionDir)$(AssemblyName)\$(OutputPath)\&quot; &quot;$(SolutionDir)..\SHAloonDemo\SHAloonDemo\csharplib\&quot;  /s /i /Y" />
   </Target>
 
 </Project>

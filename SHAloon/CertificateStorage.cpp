@@ -9,8 +9,18 @@ void CertificateStorage::refillCertificates() {
 	}
 
 	mCertificates.clear();
-	HCERTSTORE hCertStore = CertOpenStore(CERT_STORE_PROV_SYSTEM, CertificateEncodingType, 0,
-		CERT_SYSTEM_STORE_CURRENT_USER, TEXT("MY"));
+
+	if (hCertStore) {
+		if (!CertCloseStore(hCertStore, CERT_CLOSE_STORE_CHECK_FLAG)) {
+			Logger::WinApiLog(false, logSource, _T("Error closing certificate store"), LogLevel::LOG_ERROR);
+		} else {
+			hCertStore = CertOpenStore(CERT_STORE_PROV_SYSTEM, CertificateEncodingType, 0,
+				CERT_SYSTEM_STORE_CURRENT_USER, TEXT("MY"));
+		}
+	} else {
+		hCertStore = CertOpenStore(CERT_STORE_PROV_SYSTEM, CertificateEncodingType, 0,
+			CERT_SYSTEM_STORE_CURRENT_USER, TEXT("MY"));
+	}
 
 	if (!hCertStore) {
 		Logger::WinApiLog(false, logSource, _T("Error opening certificate store"), LogLevel::LOG_ERROR);
@@ -23,10 +33,6 @@ void CertificateStorage::refillCertificates() {
 		Certificate* cert = new Certificate(context);
 		mCertificates.push_back(cert);
 		context = CertEnumCertificatesInStore(hCertStore, context);
-	}
-
-	if (!CertCloseStore(hCertStore, CERT_CLOSE_STORE_CHECK_FLAG)) {
-		Logger::WinApiLog(false, logSource, _T("Error closing certificate store"), LogLevel::LOG_ERROR);
 	}
 
 	Logger::Log(true, logSource, _T("Successfully refilled certificates"), _T(""), LogLevel::LOG_INFO);
@@ -53,5 +59,10 @@ Certificate* CertificateStorage::GetNextCertificate() {
 CertificateStorage::~CertificateStorage() {
 	for (auto cert : mCertificates) {
 		if (cert) delete cert;
+	}
+	if (hCertStore) {
+		if (!CertCloseStore(hCertStore, CERT_CLOSE_STORE_CHECK_FLAG)) {
+			Logger::WinApiLog(false, _T("CertificateStorage::~CertificateStorage()"), _T("Error closing certificate store"), LogLevel::LOG_ERROR);
+		}
 	}
 }

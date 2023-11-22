@@ -49,6 +49,13 @@ void Logger::Log(bool success, const tstring& source, const tstring& summary,
                  const tstring& message, LogLevel logLevel) {
     if (Instance == nullptr) {
         Instance = new Logger(success, source, summary, message, logLevel);
+    } else {
+        Instance->mSuccess = success;
+        Instance->mSource = source;
+        Instance->mSummary = summary;
+        Instance->mMessage = message;
+        Instance->setLogLevel(logLevel);
+        Instance->setLogTime();
     }
 }
 
