@@ -14,6 +14,9 @@ void InitShaloon() {
     if (cryptoprovider->IsInitialized()) {
         return;
     }
+
+    delete cryptoprovider;
+    cryptoprovider = nullptr;
 }
 
 void FinishShaloon() {
@@ -33,19 +36,35 @@ Certificate* GetNextCertificate() {
 void SignDocument(Certificate* certificate, 
                   LPCTSTR absoluteFilePath,
                   LPCTSTR absoluteSignaturePath) {
+    if (cryptoprovider == nullptr) {
+        Logger::Log(false, _T("ShaloonLibrary::SignDocument()"), _T("Cryptoprovider doesn't exist"), tstring(), LogLevel::LOG_FATAL);
+        return;
+    }
     cryptoprovider->SignDocument(certificate, absoluteFilePath, absoluteSignaturePath);
 }
 
 Certificate* VerifySignature(LPCTSTR absoluteFilePath, LPCTSTR absoluteSignaturePath) {
+    if (cryptoprovider == nullptr) {
+        Logger::Log(false, _T("ShaloonLibrary::VerifySignature()"), _T("Cryptoprovider doesn't exist"), tstring(), LogLevel::LOG_FATAL);
+        return nullptr;
+    }
     return cryptoprovider->VerifySignature(absoluteFilePath, absoluteSignaturePath);
 }
 
 
 void EncryptDocument(Certificate* certificate, LPCTSTR absoluteSourcePath, LPCTSTR absoluteEncryptedPath) {
+    if (cryptoprovider == nullptr) {
+        Logger::Log(false, _T("ShaloonLibrary::EncryptDocument()"), _T("Cryptoprovider doesn't exist"), tstring(), LogLevel::LOG_FATAL);
+        return;
+    }
     cryptoprovider->EncryptDocument(certificate, absoluteSourcePath, absoluteEncryptedPath);
 }
 
 void DecryptDocument(LPCTSTR absoluteEncryptedPath, LPCTSTR absoluteDecryptedPath) {
+    if (cryptoprovider == nullptr) {
+        Logger::Log(false, _T("ShaloonLibrary::DecryptDocument()"), _T("Cryptoprovider doesn't exist"), tstring(), LogLevel::LOG_FATAL);
+        return;
+    }
     cryptoprovider->DecryptDocument(absoluteEncryptedPath, absoluteDecryptedPath);
 }
 
