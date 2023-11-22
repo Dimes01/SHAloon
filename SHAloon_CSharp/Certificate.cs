@@ -1,7 +1,4 @@
-﻿using System.Runtime.ConstrainedExecution;
-using System.Runtime.InteropServices;
-
-namespace SHAloon_CSharp;
+﻿namespace SHAloon_CSharp;
 
 public class Certificate {
     public IntPtr CppPointer { get; internal set; } = IntPtr.Zero;
