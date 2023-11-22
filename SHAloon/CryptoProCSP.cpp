@@ -12,7 +12,7 @@ LPSTR CryptoProCSP::getHashOidByKeyOid(LPSTR szKeyOid) {
     sign512 = const_cast<LPSTR>(szOID_CP_GOST_R3410_12_512);
 
     if (strcmp(szKeyOid, sign2001) == 0) return hash1994;
-    if (strcmp(szKeyOid, sign256) == 0) return hash256;
+    else if (strcmp(szKeyOid, sign256) == 0) return hash256;
     else if (strcmp(szKeyOid, hash512) == 0) return sign512;
 
     return NULL;
@@ -23,6 +23,7 @@ CryptoProCSP::CryptoProCSP() : Cryptoprovider() {
     auto result = CryptAcquireContext(&hCryptProv, NULL, CP_GR3410_2012_PROV, PROV_GOST_2012_256, CRYPT_VERIFYCONTEXT);
     if (result) {
         mInitialized = true;
+        Logger::Log(true, _T("CryptoProCSP::CryptoProCSP()"), _T("Successfully initiated"), tstring(), LogLevel::LOG_INFO);
     }
     if (hCryptProv) {
         CryptReleaseContext(hCryptProv, 0);
@@ -32,6 +33,8 @@ CryptoProCSP::CryptoProCSP() : Cryptoprovider() {
 void CryptoProCSP::SignDocument(Certificate* certificate,
                                 LPCTSTR absoluteFilePath,
                                 LPCTSTR absoluteSignaturePath) {
+    tstring logSource = _T("CryptoProCSP::SignDocument()");
+
     std::vector<BYTE> bData, bSignData;
 
     if (!getFileData(absoluteFilePath, bData)) {
@@ -58,9 +61,7 @@ void CryptoProCSP::SignDocument(Certificate* certificate,
     DWORD dwSignatureSize = 0;
 
     if (!CryptSignMessage(&stSignMessagePara, TRUE, 1, &pcbMessage, &dwDataSize, NULL, &dwSignatureSize)) {
-        Logger::WinApiLog(false, _T("CryptoProCSP::SignDocument()"),
-                                 _T("Error calling CryptSignMessage() for 1st time"),
-                                 LogLevel::LOG_ERROR);
+        Logger::WinApiLog(false, logSource, _T("Error calling CryptSignMessage() for 1st time"), LogLevel::LOG_ERROR);
         return;
     }
 
@@ -68,18 +69,20 @@ void CryptoProCSP::SignDocument(Certificate* certificate,
     BYTE* pcbSignData = bSignData.data();
 
     if (!CryptSignMessage(&stSignMessagePara, TRUE, 1, &pcbMessage, &dwDataSize, pcbSignData, &dwSignatureSize)) {
-        Logger::WinApiLog(false, _T("CryptoProCSP::SignDocument()"),
-                                 _T("Error calling CryptSignMessage() for 2nd time"),
-                                 LogLevel::LOG_ERROR);
+        Logger::WinApiLog(false, logSource, _T("Error calling CryptSignMessage() for 2nd time"), LogLevel::LOG_ERROR);
         return;
     }
 
     if (!saveDataToFile(absoluteSignaturePath, bSignData)) {
         return;
     }
+
+    Logger::Log(true, logSource, _T("Successfully signed the document"), tstring(), LogLevel::LOG_INFO);
 }
 
 Certificate* CryptoProCSP::VerifySignature(LPCTSTR absoluteFilePath, LPCTSTR absoluteSignaturePath) {
+    tstring logSource = _T("CryptoProCSP::VerifySignature()");
+
     if (verificationCertificate) {
         delete verificationCertificate;
         verificationCertificate = nullptr;
@@ -110,9 +113,7 @@ Certificate* CryptoProCSP::VerifySignature(LPCTSTR absoluteFilePath, LPCTSTR abs
 
     if (!CryptVerifyDetachedMessageSignature(&verifyParam, 0, pbSignature, dwSignatureSize,
                                              1, &pbMessage, &dwMessageSize, &pcCertContext)) {
-        Logger::WinApiLog(false, _T("CryptoProCSP::VerifySignature()"),
-                                 _T("Error calling CryptVerifyDetachedMessageSignature()"),
-                                 LogLevel::LOG_ERROR);
+        Logger::WinApiLog(false, logSource, _T("Error calling CryptVerifyDetachedMessageSignature()"), LogLevel::LOG_ERROR);
         return nullptr;
     }
 
@@ -120,10 +121,14 @@ Certificate* CryptoProCSP::VerifySignature(LPCTSTR absoluteFilePath, LPCTSTR abs
 
     CertFreeCertificateContext(pcCertContext);
 
+    Logger::Log(true, logSource, _T("Successfully verified document signature"), tstring(), LogLevel::LOG_INFO);
+
     return verificationCertificate;
 }
 
 void CryptoProCSP::EncryptDocument(Certificate* certificate, LPCTSTR absoluteSourcePath, LPCTSTR absoluteEncryptedPath) {
+    tstring logSource = _T("CryptoProCSP::EncryptDocument()");
+
     std::vector<BYTE> bFileData, bEncryptedFileData;
 
     if (!getFileData(absoluteSourcePath, bFileData)) {
@@ -144,9 +149,7 @@ void CryptoProCSP::EncryptDocument(Certificate* certificate, LPCTSTR absoluteSou
     if (!CryptEncryptMessage(&encryptParam, 1, &certContext, pcbFileData, dwFileDataSize,
         NULL, &dwEncryptedFileDataSize))
     {
-        Logger::WinApiLog(false, _T("CryptoProCSP::EncryptDocument()"),
-                                 _T("Error calling CryptEncryptMessage() for 1st time"),
-                                 LogLevel::LOG_ERROR);
+        Logger::WinApiLog(false, logSource, _T("Error calling CryptEncryptMessage() for 1st time"), LogLevel::LOG_ERROR);
     }
 
     bEncryptedFileData.resize(dwEncryptedFileDataSize);
@@ -154,17 +157,19 @@ void CryptoProCSP::EncryptDocument(Certificate* certificate, LPCTSTR absoluteSou
     if (!CryptEncryptMessage(&encryptParam, 1, &certContext, pcbFileData, dwFileDataSize, 
         bEncryptedFileData.data(), &dwEncryptedFileDataSize))
     {
-        Logger::WinApiLog(false, _T("CryptoProCSP::EncryptDocument()"),
-                                 _T("Error calling CryptEncryptMessage() for 2nd time"),
-                                 LogLevel::LOG_ERROR);
+        Logger::WinApiLog(false, logSource, _T("Error calling CryptEncryptMessage() for 2nd time"), LogLevel::LOG_ERROR);
     }
 
     if (!saveDataToFile(absoluteEncryptedPath, bEncryptedFileData)) {
         return;
     }
+
+    Logger::Log(true, logSource, _T("Successfully encrypted the document"), tstring(), LogLevel::LOG_INFO);
 }
 
 void CryptoProCSP::DecryptDocument(LPCTSTR absoluteEncryptedPath, LPCTSTR absoluteDecryptedPath) {
+    tstring logSource = _T("CryptoProCSP::DecryptDocument()");
+
     std::vector<BYTE> bEncryptedFileData, bDecryptedFileData;
 
     if (!getFileData(absoluteEncryptedPath, bEncryptedFileData)) {
@@ -175,8 +180,7 @@ void CryptoProCSP::DecryptDocument(LPCTSTR absoluteEncryptedPath, LPCTSTR absolu
         CERT_SYSTEM_STORE_CURRENT_USER, TEXT("MY"));
 
     if (!hCertStore) {
-        Logger::WinApiLog(false, _T("CryptoProCSP::DecryptDocument()"),
-                                 _T("Error opening certificate store"), LogLevel::LOG_ERROR);
+        Logger::WinApiLog(false, logSource, _T("Error opening certificate store"), LogLevel::LOG_ERROR);
         return;
     }
 
@@ -194,9 +198,7 @@ void CryptoProCSP::DecryptDocument(LPCTSTR absoluteEncryptedPath, LPCTSTR absolu
     if (!CryptDecryptMessage(&decryptParam, pcbEncryptedFileData, dwEncryptedFileDataSize,
         NULL, &dwDecryptedFileDataSize, NULL))
     {
-        Logger::WinApiLog(false, _T("CryptoProCSP::DecryptDocument()"),
-                                 _T("Error calling CryptDecryptMessage() for 1st time"),
-                                 LogLevel::LOG_ERROR);
+        Logger::WinApiLog(false, logSource, _T("Error calling CryptDecryptMessage() for 1st time"), LogLevel::LOG_ERROR);
     }
 
     bDecryptedFileData.resize(dwDecryptedFileDataSize);
@@ -204,19 +206,18 @@ void CryptoProCSP::DecryptDocument(LPCTSTR absoluteEncryptedPath, LPCTSTR absolu
     if (!CryptDecryptMessage(&decryptParam, pcbEncryptedFileData, dwEncryptedFileDataSize,
         bDecryptedFileData.data(), &dwDecryptedFileDataSize, NULL))
     {
-        Logger::WinApiLog(false, _T("CryptoProCSP::DecryptDocument()"),
-                                 _T("Error calling CryptDecryptMessage() for 2nd time"),
-                                 LogLevel::LOG_ERROR);
+        Logger::WinApiLog(false, logSource, _T("Error calling CryptDecryptMessage() for 2nd time"), LogLevel::LOG_ERROR);
     }
 
     if (!CertCloseStore(hCertStore, CERT_CLOSE_STORE_CHECK_FLAG)) {
-        Logger::WinApiLog(false, _T("CryptoProCSP::DecryptDocument()"),
-                                 _T("Error closing certificate store"), LogLevel::LOG_ERROR);
+        Logger::WinApiLog(false, logSource, _T("Error closing certificate store"), LogLevel::LOG_ERROR);
     }
 
     if (!saveDataToFile(absoluteDecryptedPath, bDecryptedFileData)) {
         return;
     }
+
+    Logger::Log(true, logSource, _T("Successfully decrypted the document"), tstring(), LogLevel::LOG_INFO);
 }
 
 CryptoProCSP::~CryptoProCSP() {

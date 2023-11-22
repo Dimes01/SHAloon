@@ -6,14 +6,12 @@ void InitShaloon() {
 
     cryptoprovider = new CryptoProCSP();
     if (cryptoprovider->IsInitialized()) {
-        std::cout << "CryptoPro is working here!\n";
         return;
     } 
     
     delete cryptoprovider;
     cryptoprovider = new ViPNetCSP();
     if (cryptoprovider->IsInitialized()) {
-        std::cout << "ViPNet is working here!\n";
         return;
     }
 }

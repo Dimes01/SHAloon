@@ -23,6 +23,7 @@ ViPNetCSP::ViPNetCSP() : Cryptoprovider() {
     auto result = CryptAcquireContext(&hCryptProv, NULL, VPN_DEF_PROV, VPN_PROV_TYPE, CRYPT_VERIFYCONTEXT);
     if (result) {
         mInitialized = true;
+        Logger::Log(true, _T("ViPNetCSP::ViPNetCSP()"), _T("Successfully initiated"), tstring(), LogLevel::LOG_INFO);
     }
     if (hCryptProv) {
         CryptReleaseContext(hCryptProv, 0);
@@ -32,6 +33,8 @@ ViPNetCSP::ViPNetCSP() : Cryptoprovider() {
 void ViPNetCSP::SignDocument(Certificate* certificate,
                              LPCTSTR absoluteFilePath, 
                              LPCTSTR absoluteSignaturePath) {
+    tstring logSource = _T("ViPNetCSP::SignDocument()");
+
     std::vector<BYTE> bData, bSignData;
 
     if (!getFileData(absoluteFilePath, bData)) {
@@ -57,14 +60,8 @@ void ViPNetCSP::SignDocument(Certificate* certificate,
     const BYTE* pcbMessage = bData.data();
     DWORD dwSignatureSize = 0;
 
-    HCRYPTPROV hCryptProv = 0;
-    DWORD dwKeySpec = 0;
-    BOOL freeProv = FALSE;
-
     if (!CryptSignMessage(&stSignMessagePara, TRUE, 1, &pcbMessage, &dwDataSize, NULL, &dwSignatureSize)) {
-        Logger::WinApiLog(false, _T("ViPNetCSP::SignDocument()"),
-                                 _T("Error calling CryptSignMessage() for 1st time"),
-                                 LogLevel::LOG_ERROR);
+        Logger::WinApiLog(false, logSource, _T("Error calling CryptSignMessage() for 1st time"), LogLevel::LOG_ERROR);
         return;
     }
     
@@ -72,18 +69,20 @@ void ViPNetCSP::SignDocument(Certificate* certificate,
     BYTE* pcbSignData = bSignData.data();
 
     if (!CryptSignMessage(&stSignMessagePara, TRUE, 1, &pcbMessage, &dwDataSize, pcbSignData, &dwSignatureSize)) {
-        Logger::WinApiLog(false, _T("ViPNetCSP::SignDocument()"),
-                                 _T("Error calling CryptSignMessage() for 2nd time"),
-                                 LogLevel::LOG_ERROR);
+        Logger::WinApiLog(false, logSource, _T("Error calling CryptSignMessage() for 2nd time"), LogLevel::LOG_ERROR);
         return;
     }
 
     if (!saveDataToFile(absoluteSignaturePath, bSignData)) {
         return;
     }
+
+    Logger::Log(true, logSource, _T("Successfully signed the document"), tstring(), LogLevel::LOG_INFO);
 }
 
 Certificate* ViPNetCSP::VerifySignature(LPCTSTR absoluteFilePath, LPCTSTR absoluteSignaturePath) {
+    tstring logSource = _T("ViPNetCSP::VerifySignature()");
+
     if (verificationCertificate) {
         delete verificationCertificate;
         verificationCertificate = nullptr;
@@ -114,9 +113,7 @@ Certificate* ViPNetCSP::VerifySignature(LPCTSTR absoluteFilePath, LPCTSTR absolu
 
     if (!CryptVerifyDetachedMessageSignature(&verifyParam, 0, pbSignature, dwSignatureSize,
                                              1, &pbMessage, &dwMessageSize, &pcCertContext)) {
-        Logger::WinApiLog(false, _T("ViPNetCSP::VerifySignature()"),
-                                 _T("Error calling CryptVerifyDetachedMessageSignature()"),
-                                 LogLevel::LOG_ERROR);
+        Logger::WinApiLog(false, logSource, _T("Error calling CryptVerifyDetachedMessageSignature()"), LogLevel::LOG_ERROR);
         return nullptr;
     }
 
@@ -124,10 +121,14 @@ Certificate* ViPNetCSP::VerifySignature(LPCTSTR absoluteFilePath, LPCTSTR absolu
 
     CertFreeCertificateContext(pcCertContext);
 
+    Logger::Log(true, logSource, _T("Successfully verified document signature"), tstring(), LogLevel::LOG_INFO);
+
     return verificationCertificate;
 }
 
 void ViPNetCSP::EncryptDocument(Certificate* certificate, LPCTSTR absoluteSourcePath, LPCTSTR absoluteEncryptedPath) {
+    tstring logSource = _T("ViPNetCSP::EncryptDocument()");
+
     std::vector<BYTE> bFileData, bEncryptedFileData;
 
     if (!getFileData(absoluteSourcePath, bFileData)) {
@@ -148,9 +149,7 @@ void ViPNetCSP::EncryptDocument(Certificate* certificate, LPCTSTR absoluteSource
     if (!CryptEncryptMessage(&encryptParam, 1, &certContext, pcbFileData, dwFileDataSize,
         NULL, &dwEncryptedFileDataSize))
     {
-        Logger::WinApiLog(false, _T("ViPNetCSP::EncryptDocument()"),
-                                 _T("Error calling CryptEncryptMessage() for 1st time"),
-                                 LogLevel::LOG_ERROR);
+        Logger::WinApiLog(false, logSource, _T("Error calling CryptEncryptMessage() for 1st time"), LogLevel::LOG_ERROR);
     }
 
     bEncryptedFileData.resize(dwEncryptedFileDataSize);
@@ -158,17 +157,19 @@ void ViPNetCSP::EncryptDocument(Certificate* certificate, LPCTSTR absoluteSource
     if (!CryptEncryptMessage(&encryptParam, 1, &certContext, pcbFileData, dwFileDataSize,
         bEncryptedFileData.data(), &dwEncryptedFileDataSize))
     {
-        Logger::WinApiLog(false, _T("ViPNetCSP::EncryptDocument()"),
-                                 _T("Error calling CryptEncryptMessage() for 2nd time"),
-                                 LogLevel::LOG_ERROR);
+        Logger::WinApiLog(false, logSource, _T("Error calling CryptEncryptMessage() for 2nd time"), LogLevel::LOG_ERROR);
     }
 
     if (!saveDataToFile(absoluteEncryptedPath, bEncryptedFileData)) {
         return;
     }
+
+    Logger::Log(true, logSource, _T("Successfully encrypted the document"), tstring(), LogLevel::LOG_INFO);
 }
 
 void ViPNetCSP::DecryptDocument(LPCTSTR absoluteEncryptedPath, LPCTSTR absoluteDecryptedPath) {
+    tstring logSource = _T("ViPNetCSP::DecryptDocument()");
+
     std::vector<BYTE> bEncryptedFileData, bDecryptedFileData;
 
     if (!getFileData(absoluteEncryptedPath, bEncryptedFileData)) {
@@ -179,8 +180,7 @@ void ViPNetCSP::DecryptDocument(LPCTSTR absoluteEncryptedPath, LPCTSTR absoluteD
         CERT_SYSTEM_STORE_CURRENT_USER, TEXT("MY"));
 
     if (!hCertStore) {
-        Logger::WinApiLog(false, _T("ViPNetCSP::DecryptDocument()"),
-                                 _T("Error opening certificate store"), LogLevel::LOG_ERROR);
+        Logger::WinApiLog(false, logSource, _T("Error opening certificate store"), LogLevel::LOG_ERROR);
         return;
     }
 
@@ -198,9 +198,7 @@ void ViPNetCSP::DecryptDocument(LPCTSTR absoluteEncryptedPath, LPCTSTR absoluteD
     if (!CryptDecryptMessage(&decryptParam, pcbEncryptedFileData, dwEncryptedFileDataSize,
         NULL, &dwDecryptedFileDataSize, NULL))
     {
-        Logger::WinApiLog(false, _T("ViPNetCSP::DecryptDocument()"),
-                                 _T("Error calling CryptDecryptMessage() for 1st time"),
-                                 LogLevel::LOG_ERROR);
+        Logger::WinApiLog(false, logSource, _T("Error calling CryptDecryptMessage() for 1st time"), LogLevel::LOG_ERROR);
     }
 
     bDecryptedFileData.resize(dwDecryptedFileDataSize);
@@ -208,19 +206,18 @@ void ViPNetCSP::DecryptDocument(LPCTSTR absoluteEncryptedPath, LPCTSTR absoluteD
     if (!CryptDecryptMessage(&decryptParam, pcbEncryptedFileData, dwEncryptedFileDataSize,
         bDecryptedFileData.data(), &dwDecryptedFileDataSize, NULL))
     {
-        Logger::WinApiLog(false, _T("ViPNetCSP::DecryptDocument()"),
-                                 _T("Error calling CryptDecryptMessage() for 2nd time"),
-                                 LogLevel::LOG_ERROR);
+        Logger::WinApiLog(false, logSource, _T("Error calling CryptDecryptMessage() for 2nd time"), LogLevel::LOG_ERROR);
     }
 
     if (!CertCloseStore(hCertStore, CERT_CLOSE_STORE_CHECK_FLAG)) {
-        Logger::WinApiLog(false, _T("ViPNetCSP::DecryptDocument()"),
-                                 _T("Error closing certificate store"), LogLevel::LOG_ERROR);
+        Logger::WinApiLog(false, logSource, _T("Error closing certificate store"), LogLevel::LOG_ERROR);
     }
 
     if (!saveDataToFile(absoluteDecryptedPath, bDecryptedFileData)) {
         return;
     }
+
+    Logger::Log(true, logSource, _T("Successfully decrypted the document"), tstring(), LogLevel::LOG_INFO);
 }
 
 ViPNetCSP::~ViPNetCSP() {
