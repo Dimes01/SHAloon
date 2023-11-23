@@ -18,5 +18,9 @@ public class Log {
             LogLevel = ImportsDLL.GetLogLevel()
         };
     }
+
+    public static void SetMinimalLogLevel(string logLevel) {
+        ImportsDLL.SetMinimalLogLevel(logLevel);
+    }
 }
 
