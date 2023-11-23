@@ -78,6 +78,9 @@ void Logger::writeToJson() {
     time.pop_back(); // Удалить последнюю запятую
 
     tofstream output(logsFilePath);
+#ifdef UNICODE
+    output.imbue(std::locale(".UTF-8"));
+#endif // UNICODE
     output << data << _T("\"Log\":{") << success << logLevel << source << summary << message << time << _T("}}");
     output.close();
 }
