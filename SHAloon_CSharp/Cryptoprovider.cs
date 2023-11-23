@@ -36,6 +36,10 @@ public class Cryptoprovider : IDisposable {
         ImportsDLL.DecryptDocument(absoluteEncryptedPath, absoluteDecryptedPath);
     }
 
+    public void SetMinimalLogLevel(string logLevel) {
+        ImportsDLL.SetMinimalLogLevel(logLevel);
+    }
+
     public void Dispose() {
         ImportsDLL.FinishShaloon();
     }

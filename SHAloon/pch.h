@@ -20,6 +20,7 @@
 #include <fstream>
 #include <filesystem>
 #include <system_error>
+#include <cstdlib>
 #include <strsafe.h>
 
 #ifndef MY_TSTRING
@@ -27,6 +28,14 @@
 
 typedef std::basic_string<TCHAR> tstring;
 typedef std::basic_stringstream<TCHAR> tstringstream;
+
+#ifdef UNICODE
+typedef std::wofstream tofstream;
+typedef std::wifstream tifstream;
+#else
+typedef std::ofstream tofstream;
+typedef std::ifstream tifstream;
+#endif // UNICODE
 
 #endif // MY_TSTRING
 

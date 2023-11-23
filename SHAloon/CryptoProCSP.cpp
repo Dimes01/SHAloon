@@ -177,7 +177,7 @@ void CryptoProCSP::DecryptDocument(LPCTSTR absoluteEncryptedPath, LPCTSTR absolu
     }
 
     HCERTSTORE hCertStore = CertOpenStore(CERT_STORE_PROV_SYSTEM, CertificateStorage::CertificateEncodingType, 0,
-        CERT_SYSTEM_STORE_CURRENT_USER, TEXT("MY"));
+        CERT_SYSTEM_STORE_CURRENT_USER, _T("MY"));
 
     if (!hCertStore) {
         Logger::WinApiLog(false, logSource, _T("Error opening certificate store"), LogLevel::LOG_ERROR);

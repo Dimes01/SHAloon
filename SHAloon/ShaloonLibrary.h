@@ -34,4 +34,6 @@ extern "C" {
     SHALOONAPI LPCTSTR GetLogTime();
     SHALOONAPI LPCTSTR GetLogLevel();
     SHALOONAPI bool GetLogSuccess();
+
+    SHALOONAPI void SetMinimalLogLevel(LPCTSTR logLevel);
 }

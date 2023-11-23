@@ -17,9 +17,12 @@ void InitShaloon() {
 
     delete cryptoprovider;
     cryptoprovider = nullptr;
+
+    Logger::Log(false, _T("ShaloonLibrary::InitShaloon()"), _T("No cryptoprovider found"), tstring(), LogLevel::LOG_FATAL);
 }
 
 void FinishShaloon() {
+    Logger::Log(true, _T("ShaloonLibrary::FinishShaloon()"), _T("Freeing all resources..."), tstring(), LogLevel::LOG_INFO);
     if (cryptoprovider) delete cryptoprovider;
     if (CertificateStorage::Instance) delete CertificateStorage::Instance;
     if (Logger::Instance) delete Logger::Instance;
@@ -117,4 +120,8 @@ LPCTSTR GetLogLevel() {
 
 bool GetLogSuccess() {
     return Logger::Instance->GetLogSuccess();
+}
+
+void SetMinimalLogLevel(LPCTSTR logLevel) {
+    Logger::SetMinimalLogLevel(logLevel);
 }

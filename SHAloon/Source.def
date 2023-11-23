@@ -19,3 +19,4 @@ GetLogMessage
 GetLogTime
 GetLogLevel
 GetLogSuccess
+SetMinimalLogLevel

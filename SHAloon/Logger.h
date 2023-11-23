@@ -20,8 +20,15 @@ private:
     tstring mLogLevel;
     bool mSuccess;
 
+    static inline std::filesystem::path logsFilePath{ "logs/ShaloonLogs.json" };
+    static inline LogLevel minimalLogLevel = LogLevel::LOG_INFO;
+
     void setLogTime();
     void setLogLevel(LogLevel logLevel);
+    void writeToJson();
+
+    static LogLevel fromString(const tstring& logLevel);
+    static tstring fromLogLevel(LogLevel logLevel);
 
 public:
     static inline Logger* Instance = nullptr;
@@ -36,9 +43,11 @@ public:
     tstring GetLogLevel();
     bool GetLogSuccess();
 
-    static void Log(bool success, const tstring& source, const tstring& summary, 
+    static void Log(bool success, const tstring& source, const tstring& summary,
         const tstring& message, LogLevel logLevel);
 
     // message достаётся из GetLastError()
     static void WinApiLog(bool success, const tstring& source, const tstring& summary, LogLevel logLevel);
+
+    static void SetMinimalLogLevel(const tstring& logLevel);
 };
