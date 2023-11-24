@@ -19,6 +19,7 @@ private:
     tstring mSerialNumberString;
     tstring mNotAfter;
 
+    tstring mNotBefore;
     tstring mSha1Hash;
     tstring mPublicKeyBytes;
     std::basic_string<WCHAR> mPublicKeyAlgorithm;
@@ -33,6 +34,7 @@ private:
     void setNotAfter();
     void setSerialNumber();
 
+    void setNotBefore();
     void setSha1Hash();
     void setPublicKeyBytes();
     void setPublicKeyAlgorithm();
@@ -50,6 +52,7 @@ public:
     tstring GetNotAfter();
     PCCERT_CONTEXT GetCertContext();
 
+    tstring GetNotBefore();
     tstring GetSha1Hash();
     tstring GetPublicKeyBytes();
     std::basic_string<WCHAR> GetPublicKeyAlgorithm();

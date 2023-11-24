@@ -63,6 +63,15 @@ void Certificate::setSerialNumber() {
     mSerialNumberString = ss.str();
 }
 
+void Certificate::setNotBefore() {
+	auto fileTimeNotBefore = mCertContext->pCertInfo->NotBefore;
+	SYSTEMTIME sysTime;
+
+	FileTimeToSystemTime(&fileTimeNotBefore, &sysTime);
+
+	mNotBefore = std::format(CertificateTimeFormat, sysTime.wYear, sysTime.wMonth, sysTime.wDay);
+}
+
 void Certificate::setSha1Hash() {
 	DWORD size{};
 	CertGetCertificateContextProperty(mCertContext, CERT_SHA1_HASH_PROP_ID, NULL, &size);
@@ -124,7 +133,7 @@ void Certificate::setFullName(const CERT_NAME_BLOB& person, std::basic_string<WC
 		return;
 	}
 	PCERT_NAME_INFO info = (PCERT_NAME_INFO)(blob.pbData);
-	for (DWORD i = 0; i < info->cRDN; ++i) {
+	for (long long i = info->cRDN; i >= 0; --i) {
 		for (DWORD j = 0; j < info->rgRDN[i].cRDNAttr; ++j) {
 			CERT_RDN_ATTR attr = info->rgRDN[i].rgRDNAttr[j];
 			auto attrName = getNameRDNAttrName(attr);
@@ -171,6 +180,10 @@ tstring Certificate::GetNotAfter() {
 
 PCCERT_CONTEXT Certificate::GetCertContext() {
     return mCertContext;
+}
+
+tstring Certificate::GetNotBefore() {
+	return mNotBefore;
 }
 
 tstring Certificate::GetSha1Hash() {
