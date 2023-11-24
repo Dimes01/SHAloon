@@ -9,6 +9,11 @@ Certificate::Certificate(PCCERT_CONTEXT validPcCertContext) {
 	setSerialNumber();
 }
 
+std::basic_string<WCHAR> Certificate::getNameRDNAttrName(const CERT_RDN_ATTR& attr) {
+	PCCRYPT_OID_INFO pCOI = CryptFindOIDInfo(CRYPT_OID_INFO_OID_KEY, attr.pszObjId, 0);
+	return pCOI->pwszName;
+}
+
 void Certificate::setSubject() {
 	DWORD len = CertGetNameString(mCertContext, CERT_NAME_SIMPLE_DISPLAY_TYPE, NULL, NULL, NULL, NULL);
 	if (len) {
@@ -90,6 +95,63 @@ void Certificate::setPublicKeyBytes() {
 	mPublicKeyBytes = ss.str();
 }
 
+void Certificate::setPublicKeyAlgorithm() {
+	auto publicKeyInfo = mCertContext->pCertInfo->SubjectPublicKeyInfo;
+	PCCRYPT_OID_INFO pCOI = CryptFindOIDInfo(CRYPT_OID_INFO_OID_KEY, publicKeyInfo.Algorithm.pszObjId, 0);
+	if (pCOI && pCOI->pwszName) {
+		mPublicKeyAlgorithm = pCOI->pwszName;
+	} else {
+		mPublicKeyAlgorithm = L"Undefined";
+	}
+}
+
+void Certificate::setSignatureAlgorithm() {
+	auto signatureAlgorithm = mCertContext->pCertInfo->SignatureAlgorithm;
+	PCCRYPT_OID_INFO pCOI = CryptFindOIDInfo(CRYPT_OID_INFO_OID_KEY, signatureAlgorithm.pszObjId, 0);
+	if (pCOI && pCOI->pwszName) {
+		mSignatureAlgorithm = pCOI->pwszName;
+	} else {
+		mSignatureAlgorithm = L"Undefined";
+	}
+}
+
+void Certificate::setFullName(const CERT_NAME_BLOB& person, std::basic_string<WCHAR>& name) {
+	CRYPT_DATA_BLOB blob;
+	if (!CryptDecodeObjectEx(mCertContext->dwCertEncodingType, X509_NAME, person.pbData, person.cbData,
+							 CRYPT_DECODE_ALLOC_FLAG, NULL, &blob.pbData, &blob.cbData)) {
+		Logger::WinApiLog(false, _T("Certificate::setFullName()"),
+			_T("Could not decrypt subject or issuer data"), LogLevel::LOG_WARN);
+		return;
+	}
+	PCERT_NAME_INFO info = (PCERT_NAME_INFO)(blob.pbData);
+	for (DWORD i = 0; i < info->cRDN; ++i) {
+		for (DWORD j = 0; j < info->rgRDN[i].cRDNAttr; ++j) {
+			CERT_RDN_ATTR attr = info->rgRDN[i].rgRDNAttr[j];
+			auto attrName = getNameRDNAttrName(attr);
+			if (j > 0) {
+				attrName += std::to_wstring(j);
+			}
+			DWORD attrSize = CertRDNValueToStrW(attr.dwValueType, &attr.Value, NULL, 0);
+			LPWSTR str = new WCHAR[attrSize];
+			attrSize = CertRDNValueToStrW(attr.dwValueType, &attr.Value, str, attrSize);
+			if (!name.empty()) {
+				name += L", ";
+			}
+			name += attrName + L": " + str;;
+			delete[] str;
+		}
+	}
+	LocalFree(blob.pbData);
+}
+
+void Certificate::setFullSubject() {
+	setFullName(mCertContext->pCertInfo->Subject, mFullSubject);
+}
+
+void Certificate::setFullIssuer() {
+	setFullName(mCertContext->pCertInfo->Issuer, mFullIssuer);
+}
+
 
 tstring Certificate::GetSubject() {
     return mSubject;
@@ -117,6 +179,14 @@ tstring Certificate::GetSha1Hash() {
 
 tstring Certificate::GetPublicKeyBytes() {
 	return mPublicKeyBytes;
+}
+
+std::basic_string<WCHAR> Certificate::GetPublicKeyAlgorithm() {
+	return mPublicKeyAlgorithm;
+}
+
+std::basic_string<WCHAR> Certificate::GetSignatureAlgorithm() {
+	return mSignatureAlgorithm;
 }
 
 Certificate::~Certificate() {
