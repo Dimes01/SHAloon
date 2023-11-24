@@ -1,6 +1,22 @@
 #include "pch.h"
 #include "Cryptoprovider.h"
 
+std::vector<tstring> Cryptoprovider::getAllCSPNames() {
+	DWORD  cbName{};
+	DWORD  dwType{};
+	DWORD dwIndex{};
+	std::vector<tstring> cspNames;
+
+	while (CryptEnumProviders(dwIndex, NULL, 0, &dwType, NULL, &cbName)) {
+		tstring name(cbName / sizeof(TCHAR) - 1, TCHAR{});
+		if (CryptEnumProviders(dwIndex++, NULL, 0, &dwType, name.data(), &cbName)) {
+			cspNames.push_back(name);
+		}
+	}
+
+	return cspNames;
+}
+
 bool Cryptoprovider::getFileData(LPCTSTR szFile, std::vector<BYTE>& bData) {
 	namespace fs = std::filesystem;
 

@@ -11,6 +11,8 @@ protected:
     HCRYPTPROV hCryptProv = NULL;
     Certificate* verificationCertificate = nullptr;
 
+    std::vector<tstring> getAllCSPNames();
+
     // —читать все байты файла с указанным названием в вектор. ќшибки логируютс€.
     bool getFileData(LPCTSTR szFile, std::vector<BYTE>& bData);
 

@@ -15,8 +15,7 @@ void CertificateStorage::refillCertificates() {
 		}
 	}
 
-	hCertStore = CertOpenStore(CERT_STORE_PROV_SYSTEM, CertificateEncodingType, 0,
-		CERT_SYSTEM_STORE_CURRENT_USER, _T("MY"));
+	hCertStore = CertOpenSystemStore(NULL, _T("MY"));
 
 	if (!hCertStore) {
 		Logger::WinApiLog(false, logSource, _T("Error opening certificate store"), LogLevel::LOG_ERROR);

@@ -10,10 +10,10 @@ Certificate::Certificate(PCCERT_CONTEXT validPcCertContext) {
 }
 
 void Certificate::setSubject() {
-	DWORD len = CertGetNameString(mCertContext, CERT_NAME_FRIENDLY_DISPLAY_TYPE, NULL, NULL, NULL, NULL);
+	DWORD len = CertGetNameString(mCertContext, CERT_NAME_SIMPLE_DISPLAY_TYPE, NULL, NULL, NULL, NULL);
 	if (len) {
 		std::vector<TCHAR> buf(len);
-		if (CertGetNameString(mCertContext, CERT_NAME_FRIENDLY_DISPLAY_TYPE, NULL, NULL, &buf[0], len)) {
+		if (CertGetNameString(mCertContext, CERT_NAME_SIMPLE_DISPLAY_TYPE, NULL, NULL, &buf[0], len)) {
 			mSubject = buf.data();
 		}
 	} else {
@@ -24,10 +24,10 @@ void Certificate::setSubject() {
 }
 
 void Certificate::setIssuer() {
-	DWORD len = CertGetNameString(mCertContext, CERT_NAME_FRIENDLY_DISPLAY_TYPE, CERT_NAME_ISSUER_FLAG, NULL, NULL, NULL);
+	DWORD len = CertGetNameString(mCertContext, CERT_NAME_SIMPLE_DISPLAY_TYPE, CERT_NAME_ISSUER_FLAG, NULL, NULL, NULL);
 	if (len) {
 		std::vector<TCHAR> buf(len);
-		if (CertGetNameString(mCertContext, CERT_NAME_FRIENDLY_DISPLAY_TYPE, CERT_NAME_ISSUER_FLAG, NULL, &buf[0], len)) {
+		if (CertGetNameString(mCertContext, CERT_NAME_SIMPLE_DISPLAY_TYPE, CERT_NAME_ISSUER_FLAG, NULL, &buf[0], len)) {
 			mIssuer = buf.data();
 		}
 	} else {

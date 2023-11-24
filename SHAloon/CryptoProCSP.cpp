@@ -19,14 +19,15 @@ LPSTR CryptoProCSP::getHashOidByKeyOid(LPSTR szKeyOid) {
 }
 
 CryptoProCSP::CryptoProCSP() : Cryptoprovider() {
-    // Пытаемся получить контекст КриптоПро CSP. Если удачно, значит, он есть в системе.
-    auto result = CryptAcquireContext(&hCryptProv, NULL, CP_GR3410_2012_PROV, PROV_GOST_2012_256, CRYPT_VERIFYCONTEXT);
-    if (result) {
-        mInitialized = true;
-        Logger::Log(true, _T("CryptoProCSP::CryptoProCSP()"), _T("Successfully initiated"), tstring(), LogLevel::LOG_INFO);
-    }
-    if (hCryptProv) {
-        CryptReleaseContext(hCryptProv, 0);
+    // Узнаём, есть ли имя криптопровайдера среди имён всех криптопровайдеров
+    auto cspNames = getAllCSPNames();
+    auto thisName = CP_GR3410_2012_PROV;
+
+    for (auto& name : cspNames) {
+        if (name == thisName) {
+            mInitialized = true;
+            Logger::Log(true, _T("CryptoProCSP::CryptoProCSP()"), _T("Successfully initiated"), tstring(), LogLevel::LOG_INFO);
+        }
     }
 }
 

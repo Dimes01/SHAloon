@@ -19,14 +19,15 @@ LPSTR ViPNetCSP::getHashOidByKeyOid(LPSTR szKeyOid) {
 }
 
 ViPNetCSP::ViPNetCSP() : Cryptoprovider() {
-    // Пытаемся получить контекст ViPNet CSP. Если удачно, значит, он есть в системе.
-    auto result = CryptAcquireContext(&hCryptProv, NULL, VPN_DEF_PROV, VPN_PROV_TYPE, CRYPT_VERIFYCONTEXT);
-    if (result) {
-        mInitialized = true;
-        Logger::Log(true, _T("ViPNetCSP::ViPNetCSP()"), _T("Successfully initiated"), tstring(), LogLevel::LOG_INFO);
-    }
-    if (hCryptProv) {
-        CryptReleaseContext(hCryptProv, 0);
+    // Узнаём, есть ли имя криптопровайдера среди имён всех криптопровайдеров
+    auto cspNames = getAllCSPNames();
+    auto thisName = _T(VPN_DEF_PROV_2012_512_A);
+
+    for (auto& name : cspNames) {
+        if (name == thisName) {
+            mInitialized = true;
+            Logger::Log(true, _T("ViPNetCSP::ViPNetCSP()"), _T("Successfully initiated"), tstring(), LogLevel::LOG_INFO);
+        }
     }
 }
 

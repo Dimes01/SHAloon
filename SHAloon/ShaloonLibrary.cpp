@@ -78,18 +78,18 @@ LPCTSTR GetCertificateSubject(Certificate* certificate) {
 }
 
 LPCTSTR GetCertificateIssuer(Certificate* certificate) {
-    auto subject = certificate->GetIssuer();
-    return ShaloonUtils::ToLPCTSTR(subject);
+    auto issuer = certificate->GetIssuer();
+    return ShaloonUtils::ToLPCTSTR(issuer);
 }
 
 LPCTSTR GetCertificateSerialNumber(Certificate* certificate) {
-    auto subject = certificate->GetSerialNumber();
-    return ShaloonUtils::ToLPCTSTR(subject);
+    auto serialNumber = certificate->GetSerialNumber();
+    return ShaloonUtils::ToLPCTSTR(serialNumber);
 }
 
 LPCTSTR GetCertificateNotAfter(Certificate* certificate) {
-    auto subject = certificate->GetNotAfter();
-    return ShaloonUtils::ToLPCTSTR(subject);
+    auto notAfter = certificate->GetNotAfter();
+    return ShaloonUtils::ToLPCTSTR(notAfter);
 }
 
 

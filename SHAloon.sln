@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SHAloon", "SHAloon\SHAloon.vcxproj", "{362AD111-DFD5-4BBA-8DB1-D23CD621379C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SHAloon_CSharp", "SHAloon_CSharp\SHAloon_CSharp.csproj", "{C8102B4F-7224-48CA-8A95-4F1E8A5D9788}"
+	ProjectSection(ProjectDependencies) = postProject
+		{362AD111-DFD5-4BBA-8DB1-D23CD621379C} = {362AD111-DFD5-4BBA-8DB1-D23CD621379C}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
