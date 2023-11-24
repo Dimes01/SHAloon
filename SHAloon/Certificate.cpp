@@ -52,11 +52,32 @@ void Certificate::setSerialNumber() {
     tstringstream ss;
 
     for (long long i = serialNumberSize - 1; i >= 0; --i) {
-		ss << std::format(CertificateSerialNumberByteFormat, (int)(pbSerialNumber[i]));
+		ss << std::format(CertificateDataByteFormat, (int)(pbSerialNumber[i]));
     }
 
     mSerialNumberString = ss.str();
 }
+
+void Certificate::setSha1Hash() {
+	DWORD size{};
+	CertGetCertificateContextProperty(mCertContext, CERT_SHA1_HASH_PROP_ID, NULL, &size);
+	if (size) {
+		std::vector<BYTE> data(size);
+		tstringstream ss;
+		CertGetCertificateContextProperty(mCertContext, CERT_SHA1_HASH_PROP_ID, data.data(), &size);
+
+		for (DWORD idx = 0; idx < size; ++idx) {
+			ss << std::format(CertificateDataByteFormat, (int)(data[idx]));
+		}
+
+		mSha1Hash = ss.str();
+	} else {
+		Logger::WinApiLog(false, _T("Certificate::setSha1Hash()"),
+								 _T("Error calling CertGetCertificateContextProperty() 1st time"),
+							     LogLevel::LOG_WARN);
+	}
+}
+
 
 tstring Certificate::GetSubject() {
     return mSubject;
