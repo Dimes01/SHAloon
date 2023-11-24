@@ -20,6 +20,7 @@ private:
     tstring mNotAfter;
 
     tstring mSha1Hash;
+    tstring mPublicKeyBytes;
 
     void setSubject();
     void setIssuer();
@@ -27,6 +28,7 @@ private:
     void setSerialNumber();
 
     void setSha1Hash();
+    void setPublicKeyBytes();
 
 public:
     Certificate(PCCERT_CONTEXT validPcCertContext);
@@ -36,6 +38,9 @@ public:
     tstring GetSerialNumber();
     tstring GetNotAfter();
     PCCERT_CONTEXT GetCertContext();
+
+    tstring GetSha1Hash();
+    tstring GetPublicKeyBytes();
 
     ~Certificate();
 };

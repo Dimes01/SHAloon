@@ -78,6 +78,18 @@ void Certificate::setSha1Hash() {
 	}
 }
 
+void Certificate::setPublicKeyBytes() {
+	auto pb = mCertContext->pCertInfo->SubjectPublicKeyInfo.PublicKey.pbData;
+	auto cb = mCertContext->pCertInfo->SubjectPublicKeyInfo.PublicKey.cbData;
+	tstringstream ss;
+
+	for (DWORD idx = 0; idx < cb; ++idx) {
+		ss << std::format(CertificateDataByteFormat, (int)(pb[idx]));
+	}
+
+	mPublicKeyBytes = ss.str();
+}
+
 
 tstring Certificate::GetSubject() {
     return mSubject;
@@ -97,6 +109,14 @@ tstring Certificate::GetNotAfter() {
 
 PCCERT_CONTEXT Certificate::GetCertContext() {
     return mCertContext;
+}
+
+tstring Certificate::GetSha1Hash() {
+	return mSha1Hash;
+}
+
+tstring Certificate::GetPublicKeyBytes() {
+	return mPublicKeyBytes;
 }
 
 Certificate::~Certificate() {
