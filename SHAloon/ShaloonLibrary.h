@@ -28,6 +28,14 @@ extern "C" {
     SHALOONAPI LPCTSTR GetCertificateSerialNumber(Certificate* certificate);
     SHALOONAPI LPCTSTR GetCertificateNotAfter(Certificate* certificate);
 
+    SHALOONAPI LPCTSTR GetCertificateNotBefore(Certificate* certificate);
+    SHALOONAPI LPCTSTR GetCertificateSha1Hash(Certificate* certificate);
+    SHALOONAPI LPCTSTR GetCertificatePublicKeyBytes(Certificate* certificate);
+    SHALOONAPI LPCWSTR GetCertificatePublicKeyAlgorithm(Certificate* certificate);
+    SHALOONAPI LPCWSTR GetCertificateSignatureAlgorithm(Certificate* certificate);
+    SHALOONAPI LPCWSTR GetCertificateFullSubject(Certificate* certificate);
+    SHALOONAPI LPCWSTR GetCertificateFullIssuer(Certificate* certificate);
+
     SHALOONAPI LPCTSTR GetLogSource();
     SHALOONAPI LPCTSTR GetLogSummary();
     SHALOONAPI LPCTSTR GetLogMessage();

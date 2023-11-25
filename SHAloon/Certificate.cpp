@@ -7,6 +7,14 @@ Certificate::Certificate(PCCERT_CONTEXT validPcCertContext) {
 	setIssuer();
 	setNotAfter();
 	setSerialNumber();
+
+	setNotBefore();
+	setSha1Hash();
+	setPublicKeyBytes();
+	setPublicKeyAlgorithm();
+	setSignatureAlgorithm();
+	setFullSubject();
+	setFullIssuer();
 }
 
 std::basic_string<WCHAR> Certificate::getNameRDNAttrName(const CERT_RDN_ATTR& attr) {
@@ -99,6 +107,7 @@ void Certificate::setPublicKeyBytes() {
 
 	for (DWORD idx = 0; idx < cb; ++idx) {
 		ss << std::format(CertificateDataByteFormat, (int)(pb[idx]));
+		if (idx < cb - 1) ss << _T(' ');
 	}
 
 	mPublicKeyBytes = ss.str();
@@ -130,11 +139,11 @@ void Certificate::setFullName(const CERT_NAME_BLOB& person, std::basic_string<WC
 	if (!CryptDecodeObjectEx(mCertContext->dwCertEncodingType, X509_NAME, person.pbData, person.cbData,
 							 CRYPT_DECODE_ALLOC_FLAG, NULL, &blob.pbData, &blob.cbData)) {
 		Logger::WinApiLog(false, _T("Certificate::setFullName()"),
-			_T("Could not decrypt subject or issuer data"), LogLevel::LOG_WARN);
+			                     _T("CryptDecodeObjectEx() failed"), LogLevel::LOG_WARN);
 		return;
 	}
 	PCERT_NAME_INFO info = (PCERT_NAME_INFO)(blob.pbData);
-	for (long long i = info->cRDN; i >= 0; --i) {
+	for (long long i = info->cRDN - 1; i >= 0; --i) {
 		for (DWORD j = 0; j < info->rgRDN[i].cRDNAttr; ++j) {
 			CERT_RDN_ATTR attr = info->rgRDN[i].rgRDNAttr[j];
 			auto attrName = getNameRDNAttrName(attr);
@@ -201,6 +210,14 @@ std::basic_string<WCHAR> Certificate::GetPublicKeyAlgorithm() {
 
 std::basic_string<WCHAR> Certificate::GetSignatureAlgorithm() {
 	return mSignatureAlgorithm;
+}
+
+std::basic_string<WCHAR> Certificate::GetFullSubject() {
+	return mFullSubject;
+}
+
+std::basic_string<WCHAR> Certificate::GetFullIssuer() {
+	return mFullIssuer;
 }
 
 Certificate::~Certificate() {

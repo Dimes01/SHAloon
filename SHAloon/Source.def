@@ -13,6 +13,13 @@ GetCertificateSubject
 GetCertificateIssuer
 GetCertificateSerialNumber
 GetCertificateNotAfter
+GetCertificateNotBefore
+GetCertificateSha1Hash
+GetCertificatePublicKeyBytes
+GetCertificatePublicKeyAlgorithm
+GetCertificateSignatureAlgorithm
+GetCertificateFullSubject
+GetCertificateFullIssuer
 GetLogSource
 GetLogSummary
 GetLogMessage

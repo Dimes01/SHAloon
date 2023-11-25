@@ -92,6 +92,41 @@ LPCTSTR GetCertificateNotAfter(Certificate* certificate) {
     return ShaloonUtils::ToLPCTSTR(notAfter);
 }
 
+LPCTSTR GetCertificateNotBefore(Certificate* certificate) {
+    auto notBefore = certificate->GetNotBefore();
+    return ShaloonUtils::ToLPCTSTR(notBefore);
+}
+
+LPCTSTR GetCertificateSha1Hash(Certificate* certificate) {
+    auto notBefore = certificate->GetSha1Hash();
+    return ShaloonUtils::ToLPCTSTR(notBefore);
+}
+
+LPCTSTR GetCertificatePublicKeyBytes(Certificate* certificate) {
+    auto notBefore = certificate->GetPublicKeyBytes();
+    return ShaloonUtils::ToLPCTSTR(notBefore);
+}
+
+LPCWSTR GetCertificatePublicKeyAlgorithm(Certificate* certificate) {
+    auto pkAlgorithm = certificate->GetPublicKeyAlgorithm();
+    return ShaloonUtils::ToLPCWSTR(pkAlgorithm);
+}
+
+LPCWSTR GetCertificateSignatureAlgorithm(Certificate* certificate) {
+    auto signatureAlgorithm = certificate->GetSignatureAlgorithm();
+    return ShaloonUtils::ToLPCWSTR(signatureAlgorithm);
+}
+
+LPCWSTR GetCertificateFullSubject(Certificate* certificate) {
+    auto fullSubject = certificate->GetFullSubject();
+    return ShaloonUtils::ToLPCWSTR(fullSubject);
+}
+
+LPCWSTR GetCertificateFullIssuer(Certificate* certificate) {
+    auto fullIssuer = certificate->GetFullIssuer();
+    return ShaloonUtils::ToLPCWSTR(fullIssuer);
+}
+
 
 LPCTSTR GetLogSource() {
     tstring source = Logger::Instance->GetLogSource();

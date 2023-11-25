@@ -29,6 +29,29 @@ internal static class ImportsDLL {
     [DllImport(path_to_dll_cryptoprovider, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
     internal static extern string GetCertificateNotAfter(IntPtr cert);
 
+
+    [DllImport(path_to_dll_cryptoprovider, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern string GetCertificateNotBefore(IntPtr cert);
+
+    [DllImport(path_to_dll_cryptoprovider, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern string GetCertificateSha1Hash(IntPtr cert);
+
+    [DllImport(path_to_dll_cryptoprovider, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern string GetCertificatePublicKeyBytes(IntPtr cert);
+
+    [DllImport(path_to_dll_cryptoprovider, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern string GetCertificatePublicKeyAlgorithm(IntPtr cert);
+
+    [DllImport(path_to_dll_cryptoprovider, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern string GetCertificateSignatureAlgorithm(IntPtr cert);
+
+    [DllImport(path_to_dll_cryptoprovider, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern string GetCertificateFullSubject(IntPtr cert);
+
+    [DllImport(path_to_dll_cryptoprovider, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern string GetCertificateFullIssuer(IntPtr cert);
+
+
     [DllImport(path_to_dll_cryptoprovider, CharSet=CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
     internal static extern void SignDocument(IntPtr cert, string absoluteFileName, string absoluteSignatureName);
 

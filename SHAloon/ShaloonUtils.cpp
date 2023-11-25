@@ -2,8 +2,11 @@
 #include "ShaloonUtils.h"
 
 LPCTSTR ShaloonUtils::ToLPCTSTR(const tstring& str) {
-    size_t size = str.size() + 1;
-    LPTSTR result = new TCHAR[size];
-    StringCchCopy(result, size, str.c_str());
+    LPTSTR result = _tcsdup(str.c_str());
+    return result;
+}
+
+LPCWSTR ShaloonUtils::ToLPCWSTR(const std::basic_string<WCHAR>& str) {
+    LPWSTR result = _wcsdup(str.c_str());
     return result;
 }

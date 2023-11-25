@@ -57,6 +57,8 @@ public:
     tstring GetPublicKeyBytes();
     std::basic_string<WCHAR> GetPublicKeyAlgorithm();
     std::basic_string<WCHAR> GetSignatureAlgorithm();
+    std::basic_string<WCHAR> GetFullSubject();
+    std::basic_string<WCHAR> GetFullIssuer();
 
     ~Certificate();
 };
