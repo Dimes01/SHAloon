@@ -126,6 +126,7 @@ void Certificate::setSignatureAlgorithm() {
 
 void Certificate::setFullName(const CERT_NAME_BLOB& person, std::basic_string<WCHAR>& name) {
 	CRYPT_DATA_BLOB blob;
+	ZeroMemory(&blob, sizeof(CRYPT_DATA_BLOB));
 	if (!CryptDecodeObjectEx(mCertContext->dwCertEncodingType, X509_NAME, person.pbData, person.cbData,
 							 CRYPT_DECODE_ALLOC_FLAG, NULL, &blob.pbData, &blob.cbData)) {
 		Logger::WinApiLog(false, _T("Certificate::setFullName()"),
@@ -146,7 +147,7 @@ void Certificate::setFullName(const CERT_NAME_BLOB& person, std::basic_string<WC
 			if (!name.empty()) {
 				name += L", ";
 			}
-			name += attrName + L": " + str;;
+			name += attrName + L": " + str;
 			delete[] str;
 		}
 	}
