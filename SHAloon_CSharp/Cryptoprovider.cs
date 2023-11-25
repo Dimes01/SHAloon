@@ -32,8 +32,9 @@ public class Cryptoprovider : IDisposable {
         ImportsDLL.EncryptDocument(cert.CppPointer, absoluteSourcePath, absoluteEncryptedPath);
     }
 
-    public void DecryptDocument(string absoluteEncryptedPath, string absoluteDecryptedPath) {
-        ImportsDLL.DecryptDocument(absoluteEncryptedPath, absoluteDecryptedPath);
+    public Certificate? DecryptDocument(string absoluteEncryptedPath, string absoluteDecryptedPath) {
+        var pcert = ImportsDLL.DecryptDocument(absoluteEncryptedPath, absoluteDecryptedPath);
+        return Certificate.FromCppPtr(pcert);
     }
 
     public void Dispose() {

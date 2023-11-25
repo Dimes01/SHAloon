@@ -46,6 +46,8 @@ private:
 public:
     Certificate(PCCERT_CONTEXT validPcCertContext);
 
+    void FreeCertificateContext();
+
     tstring GetSubject();
     tstring GetIssuer();
     tstring GetSerialNumber();

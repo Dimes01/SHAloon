@@ -17,6 +17,13 @@ Certificate::Certificate(PCCERT_CONTEXT validPcCertContext) {
 	setFullIssuer();
 }
 
+void Certificate::FreeCertificateContext() {
+	if (mCertContext) {
+		CertFreeCertificateContext(mCertContext);
+		mCertContext = nullptr;
+	}
+}
+
 std::basic_string<WCHAR> Certificate::getNameRDNAttrName(const CERT_RDN_ATTR& attr) {
 	PCCRYPT_OID_INFO pCOI = CryptFindOIDInfo(CRYPT_OID_INFO_OID_KEY, attr.pszObjId, 0);
 	return pCOI->pwszName;
@@ -221,5 +228,5 @@ std::basic_string<WCHAR> Certificate::GetFullIssuer() {
 }
 
 Certificate::~Certificate() {
-    if (mCertContext) CertFreeCertificateContext(mCertContext);
+	FreeCertificateContext();
 }

@@ -81,4 +81,10 @@ Cryptoprovider::~Cryptoprovider() {
     if (hCryptProv) {
         CryptReleaseContext(hCryptProv, 0);
     }
+	if (verificationCertificate) {
+		delete verificationCertificate;
+	}
+	if (decryptionCertificate) {
+		delete decryptionCertificate;
+	}
 }

@@ -151,6 +151,7 @@ void CryptoProCSP::EncryptDocument(Certificate* certificate, LPCTSTR absoluteSou
         NULL, &dwEncryptedFileDataSize))
     {
         Logger::WinApiLog(false, logSource, _T("Error calling CryptEncryptMessage() for 1st time"), LogLevel::LOG_ERROR);
+        return;
     }
 
     bEncryptedFileData.resize(dwEncryptedFileDataSize);
@@ -159,6 +160,7 @@ void CryptoProCSP::EncryptDocument(Certificate* certificate, LPCTSTR absoluteSou
         bEncryptedFileData.data(), &dwEncryptedFileDataSize))
     {
         Logger::WinApiLog(false, logSource, _T("Error calling CryptEncryptMessage() for 2nd time"), LogLevel::LOG_ERROR);
+        return;
     }
 
     if (!saveDataToFile(absoluteEncryptedPath, bEncryptedFileData)) {
@@ -168,21 +170,25 @@ void CryptoProCSP::EncryptDocument(Certificate* certificate, LPCTSTR absoluteSou
     Logger::Log(true, logSource, _T("Successfully encrypted the document"), tstring(), LogLevel::LOG_INFO);
 }
 
-void CryptoProCSP::DecryptDocument(LPCTSTR absoluteEncryptedPath, LPCTSTR absoluteDecryptedPath) {
+Certificate* CryptoProCSP::DecryptDocument(LPCTSTR absoluteEncryptedPath, LPCTSTR absoluteDecryptedPath) {
     tstring logSource = _T("CryptoProCSP::DecryptDocument()");
+
+    if (decryptionCertificate) {
+        delete decryptionCertificate;
+        decryptionCertificate = nullptr;
+    }
 
     std::vector<BYTE> bEncryptedFileData, bDecryptedFileData;
 
     if (!getFileData(absoluteEncryptedPath, bEncryptedFileData)) {
-        return;
+        return nullptr;
     }
 
-    HCERTSTORE hCertStore = CertOpenStore(CERT_STORE_PROV_SYSTEM, CertificateStorage::CertificateEncodingType, 0,
-        CERT_SYSTEM_STORE_CURRENT_USER, _T("MY"));
+    HCERTSTORE hCertStore = CertOpenSystemStore(NULL, _T("MY"));
 
     if (!hCertStore) {
         Logger::WinApiLog(false, logSource, _T("Error opening certificate store"), LogLevel::LOG_ERROR);
-        return;
+        return nullptr;
     }
 
     DWORD dwEncryptedFileDataSize = (DWORD)bEncryptedFileData.size();
@@ -200,25 +206,37 @@ void CryptoProCSP::DecryptDocument(LPCTSTR absoluteEncryptedPath, LPCTSTR absolu
         NULL, &dwDecryptedFileDataSize, NULL))
     {
         Logger::WinApiLog(false, logSource, _T("Error calling CryptDecryptMessage() for 1st time"), LogLevel::LOG_ERROR);
+        return nullptr;
+    }
+
+    PCCERT_CONTEXT pcCertContext = NULL;
+    bDecryptedFileData.resize(dwDecryptedFileDataSize);
+
+    if (!CryptDecryptMessage(&decryptParam, pcbEncryptedFileData, dwEncryptedFileDataSize,
+        bDecryptedFileData.data(), &dwDecryptedFileDataSize, &pcCertContext))
+    {
+        Logger::WinApiLog(false, logSource, _T("Error calling CryptDecryptMessage() for 2nd time"), LogLevel::LOG_ERROR);
+        return nullptr;
     }
 
     bDecryptedFileData.resize(dwDecryptedFileDataSize);
 
-    if (!CryptDecryptMessage(&decryptParam, pcbEncryptedFileData, dwEncryptedFileDataSize,
-        bDecryptedFileData.data(), &dwDecryptedFileDataSize, NULL))
-    {
-        Logger::WinApiLog(false, logSource, _T("Error calling CryptDecryptMessage() for 2nd time"), LogLevel::LOG_ERROR);
-    }
+    decryptionCertificate = new Certificate(pcCertContext);
+    decryptionCertificate->FreeCertificateContext();
+
+    CertFreeCertificateContext(pcCertContext);
 
     if (!CertCloseStore(hCertStore, CERT_CLOSE_STORE_CHECK_FLAG)) {
         Logger::WinApiLog(false, logSource, _T("Error closing certificate store"), LogLevel::LOG_ERROR);
     }
 
     if (!saveDataToFile(absoluteDecryptedPath, bDecryptedFileData)) {
-        return;
+        return nullptr;
     }
 
     Logger::Log(true, logSource, _T("Successfully decrypted the document"), tstring(), LogLevel::LOG_INFO);
+
+    return decryptionCertificate;
 }
 
 CryptoProCSP::~CryptoProCSP() {

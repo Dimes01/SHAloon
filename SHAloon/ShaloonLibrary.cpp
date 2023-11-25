@@ -63,12 +63,12 @@ void EncryptDocument(Certificate* certificate, LPCTSTR absoluteSourcePath, LPCTS
     cryptoprovider->EncryptDocument(certificate, absoluteSourcePath, absoluteEncryptedPath);
 }
 
-void DecryptDocument(LPCTSTR absoluteEncryptedPath, LPCTSTR absoluteDecryptedPath) {
+Certificate* DecryptDocument(LPCTSTR absoluteEncryptedPath, LPCTSTR absoluteDecryptedPath) {
     if (cryptoprovider == nullptr) {
         Logger::Log(false, _T("ShaloonLibrary::DecryptDocument()"), _T("Cryptoprovider doesn't exist"), tstring(), LogLevel::LOG_FATAL);
-        return;
+        return nullptr;
     }
-    cryptoprovider->DecryptDocument(absoluteEncryptedPath, absoluteDecryptedPath);
+    return cryptoprovider->DecryptDocument(absoluteEncryptedPath, absoluteDecryptedPath);
 }
 
 

@@ -41,6 +41,38 @@ void Logger::setLogLevel(LogLevel logLevel) {
     mLogLevel = fromLogLevel(logLevel);
 }
 
+void Logger::readFromSettings() {
+    namespace fs = std::filesystem;
+
+    fs::path logsFolder = logsConfigPath.parent_path();
+    if (fs::exists(logsFolder) == false) {
+        fs::create_directory(logsFolder);
+    }
+
+    tifstream input(logsConfigPath);
+    if (input.is_open() == false) return;
+
+    tstring data;
+    while (input >> data) {
+        if (data == _T("LogLevel")) {
+            input >> data >> data;
+            minimalLogLevel = fromString(data);
+        }
+    }
+}
+
+void Logger::writeToSettings() {
+    namespace fs = std::filesystem;
+
+    fs::path logsFolder = logsConfigPath.parent_path();
+    if (fs::exists(logsFolder) == false) {
+        fs::create_directory(logsFolder);
+    }
+
+    tofstream output(logsConfigPath);
+    output << _T("LogLevel : ") << fromLogLevel(minimalLogLevel);
+}
+
 void Logger::writeToJson() {
     namespace fs = std::filesystem;
 
@@ -52,9 +84,11 @@ void Logger::writeToJson() {
     tifstream input(logsFilePath);
     tstringstream ss;
     tstring data;
-    ss << input.rdbuf();
-    data = ss.str();
-    input.close();
+    if (input.is_open() == true) {
+        ss << input.rdbuf();
+        data = ss.str();
+        input.close();
+    }
 
     if (data.size() == 0) {
         data.push_back(_T('{'));
@@ -125,4 +159,5 @@ void Logger::WinApiLog(bool success, const tstring& source, const tstring& summa
 
 void Logger::SetMinimalLogLevel(const tstring& logLevel) {
     minimalLogLevel = fromString(logLevel);
+    writeToSettings();
 }

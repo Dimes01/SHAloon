@@ -21,7 +21,7 @@ extern "C" {
     SHALOONAPI Certificate* VerifySignature(LPCTSTR absoluteFilePath, LPCTSTR absoluteSignaturePath);
 
     SHALOONAPI void EncryptDocument(Certificate* certificate, LPCTSTR absoluteSourcePath, LPCTSTR absoluteEncryptedPath);
-    SHALOONAPI void DecryptDocument(LPCTSTR absoluteEncryptedPath, LPCTSTR absoluteDecryptedPath);
+    SHALOONAPI Certificate* DecryptDocument(LPCTSTR absoluteEncryptedPath, LPCTSTR absoluteDecryptedPath);
 
     SHALOONAPI LPCTSTR GetCertificateSubject(Certificate* certificate);
     SHALOONAPI LPCTSTR GetCertificateIssuer(Certificate* certificate);

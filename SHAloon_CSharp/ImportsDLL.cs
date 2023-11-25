@@ -62,7 +62,7 @@ internal static class ImportsDLL {
     internal static extern void EncryptDocument(IntPtr cert, string absoluteSourcePath, string absoluteEncryptedPath);
 
     [DllImport(path_to_dll_cryptoprovider, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-    internal static extern void DecryptDocument(string absoluteEncryptedPath, string absoluteDecryptedPath);
+    internal static extern IntPtr DecryptDocument(string absoluteEncryptedPath, string absoluteDecryptedPath);
 
 
     [DllImport(path_to_dll_cryptoprovider, CallingConvention = CallingConvention.Cdecl)]

@@ -17,7 +17,7 @@ public:
 
     virtual void EncryptDocument(Certificate* certificate, LPCTSTR absoluteSourcePath, LPCTSTR absoluteEncryptedPath) override;
 
-    virtual void DecryptDocument(LPCTSTR absoluteEncryptedPath, LPCTSTR absoluteDecryptedPath) override;
+    virtual Certificate* DecryptDocument(LPCTSTR absoluteEncryptedPath, LPCTSTR absoluteDecryptedPath) override;
 
     virtual ~ViPNetCSP();
 };

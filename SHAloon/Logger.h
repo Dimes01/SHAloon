@@ -20,11 +20,15 @@ private:
     tstring mLogLevel;
     bool mSuccess;
 
+    static inline std::filesystem::path logsConfigPath{ "logs/ShaloonLogsSettings.conf" };
     static inline std::filesystem::path logsFilePath{ "logs/ShaloonLogs.json" };
     static inline LogLevel minimalLogLevel = LogLevel::LOG_INFO;
 
     void setLogTime();
     void setLogLevel(LogLevel logLevel);
+
+    static void readFromSettings();
+    static void writeToSettings();
     void writeToJson();
 
     static LogLevel fromString(const tstring& logLevel);

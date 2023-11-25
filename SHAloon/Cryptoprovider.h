@@ -10,6 +10,7 @@ protected:
 
     HCRYPTPROV hCryptProv = NULL;
     Certificate* verificationCertificate = nullptr;
+    Certificate* decryptionCertificate = nullptr;
 
     std::vector<tstring> getAllCSPNames();
 
@@ -32,7 +33,7 @@ public:
 
     virtual void EncryptDocument(Certificate* certificate, LPCTSTR absoluteSourcePath, LPCTSTR absoluteEncryptedPath) = 0;
 
-    virtual void DecryptDocument(LPCTSTR absoluteEncryptedPath, LPCTSTR absoluteDecryptedPath) = 0;
+    virtual Certificate* DecryptDocument(LPCTSTR absoluteEncryptedPath, LPCTSTR absoluteDecryptedPath) = 0;
 
     virtual ~Cryptoprovider();
 };
