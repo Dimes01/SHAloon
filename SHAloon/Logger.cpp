@@ -141,8 +141,6 @@ tstring Logger::fromLogLevel(LogLevel logLevel) {
 
 void Logger::Log(bool success, const tstring& source, const tstring& summary,
                  const tstring& message, LogLevel logLevel) {
-    if (logLevel > minimalLogLevel) return;
-
     if (Instance == nullptr) {
         Instance = new Logger(success, source, summary, message, logLevel);
     } else {
@@ -153,7 +151,9 @@ void Logger::Log(bool success, const tstring& source, const tstring& summary,
         Instance->setLogLevel(logLevel);
         Instance->setLogTime();
     }
-    Instance->writeToJson();
+    if (logLevel <= minimalLogLevel) {
+        Instance->writeToJson();
+    }
 }
 
 void Logger::WinApiLog(bool success, const tstring& source, const tstring& summary, LogLevel logLevel) {
