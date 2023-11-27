@@ -47,6 +47,8 @@ public:
     tstring GetLogLevel();
     bool GetLogSuccess();
 
+    static void Init();
+
     static void Log(bool success, const tstring& source, const tstring& summary,
         const tstring& message, LogLevel logLevel);
 

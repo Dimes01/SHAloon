@@ -32,6 +32,10 @@ bool Logger::GetLogSuccess() {
     return mSuccess;
 }
 
+void Logger::Init() {
+    readFromSettings();
+}
+
 void Logger::setLogTime() {
     auto const currentLocalTime = std::chrono::current_zone()->to_local(std::chrono::system_clock::now());
     mTime = std::format(LogTimeFormat, currentLocalTime);
@@ -141,7 +145,6 @@ void Logger::Log(bool success, const tstring& source, const tstring& summary,
 
     if (Instance == nullptr) {
         Instance = new Logger(success, source, summary, message, logLevel);
-        readFromSettings();
     } else {
         Instance->mSuccess = success;
         Instance->mSource = source;

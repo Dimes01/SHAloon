@@ -2,6 +2,8 @@
 #include "ShaloonLibrary.h"
 
 void InitShaloon() {
+    Logger::Init();
+
     CertificateStorage::Instance = new CertificateStorage();
 
     cryptoprovider = new CryptoProCSP();
