@@ -141,6 +141,7 @@ void Logger::Log(bool success, const tstring& source, const tstring& summary,
 
     if (Instance == nullptr) {
         Instance = new Logger(success, source, summary, message, logLevel);
+        readFromSettings();
     } else {
         Instance->mSuccess = success;
         Instance->mSource = source;
