@@ -20,12 +20,16 @@ private:
     tstring mLogLevel;
     bool mSuccess;
 
-    static inline std::filesystem::path logsConfigPath{ "logs/ShaloonLogsSettings.conf" };
-    static inline std::filesystem::path logsFilePath{ "logs/ShaloonLogs.json" };
+    bool anyLogWritten = false;
+    std::filesystem::path logsFilePath;
+
+    static inline std::filesystem::path settingsPath{ "settings/ShaloonSettings.conf" };
+    static inline std::filesystem::path logsFolderPath{ _T("logs/") };
     static inline LogLevel minimalLogLevel = LogLevel::LOG_INFO;
 
     void setLogTime();
     void setLogLevel(LogLevel logLevel);
+    void setLogsFilePath();
 
     static void readFromSettings();
     static void writeToSettings();
@@ -39,6 +43,7 @@ public:
 
     Logger(bool success, const tstring& source, const tstring& summary,
         const tstring& message, LogLevel logLevel);
+    ~Logger();
 
     tstring GetLogSource();
     tstring GetLogSummary();
@@ -48,6 +53,7 @@ public:
     bool GetLogSuccess();
 
     static void Init();
+    static void Dispose();
 
     static void Log(bool success, const tstring& source, const tstring& summary,
         const tstring& message, LogLevel logLevel);

@@ -3,9 +3,17 @@
 
 Logger::Logger(bool success, const tstring& source, const tstring& summary,
                const tstring& message, LogLevel logLevel)
-               : mSuccess(success), mSource(source), mSummary(summary), mMessage(message) {
+    : mSuccess(success), mSource(source), mSummary(summary), mMessage(message) {
     setLogTime();
     setLogLevel(logLevel);
+    setLogsFilePath();
+}
+
+Logger::~Logger() {
+    if (anyLogWritten) {
+        tofstream output(logsFilePath, std::ios::app);
+        output << _T("}");
+    }
 }
 
 tstring Logger::GetLogSource() {
@@ -33,7 +41,22 @@ bool Logger::GetLogSuccess() {
 }
 
 void Logger::Init() {
+    namespace fs = std::filesystem;
+
     readFromSettings();
+
+    if (fs::exists(logsFolderPath) == false) {
+        fs::create_directory(logsFolderPath);
+    }
+
+    auto settingsParent = settingsPath.parent_path();
+    if (fs::exists(settingsParent) == false) {
+        fs::create_directory(settingsParent);
+    }
+}
+
+void Logger::Dispose() {
+    if (Instance != nullptr) delete Instance;
 }
 
 void Logger::setLogTime() {
@@ -45,15 +68,15 @@ void Logger::setLogLevel(LogLevel logLevel) {
     mLogLevel = fromLogLevel(logLevel);
 }
 
+void Logger::setLogsFilePath() {
+    tstring time{ mTime };
+    std::replace(time.begin(), time.end(), _T(':'), _T('-'));
+    tstring name = _T("ShaloonLogs-") + time + _T(".json");
+    logsFilePath = logsFolderPath / name;
+}
+
 void Logger::readFromSettings() {
-    namespace fs = std::filesystem;
-
-    fs::path logsFolder = logsConfigPath.parent_path();
-    if (fs::exists(logsFolder) == false) {
-        fs::create_directory(logsFolder);
-    }
-
-    tifstream input(logsConfigPath);
+    tifstream input(settingsPath);
     if (input.is_open() == false) return;
 
     tstring data;
@@ -66,41 +89,12 @@ void Logger::readFromSettings() {
 }
 
 void Logger::writeToSettings() {
-    namespace fs = std::filesystem;
-
-    fs::path logsFolder = logsConfigPath.parent_path();
-    if (fs::exists(logsFolder) == false) {
-        fs::create_directory(logsFolder);
-    }
-
-    tofstream output(logsConfigPath);
+    tofstream output(settingsPath);
     output << _T("LogLevel : ") << fromLogLevel(minimalLogLevel);
 }
 
 void Logger::writeToJson() {
     namespace fs = std::filesystem;
-
-    fs::path logsFolder = logsFilePath.parent_path();
-    if (fs::exists(logsFolder) == false) {
-        fs::create_directory(logsFolder);
-    }
-
-    tifstream input(logsFilePath);
-    tstringstream ss;
-    tstring data;
-    if (input.is_open() == true) {
-        ss << input.rdbuf();
-        data = ss.str();
-        input.close();
-    }
-
-    if (data.size() == 0) {
-        data.push_back(_T('{'));
-    } else {
-        // Заменить последнюю '}' на ',', чтобы добавить новый объект
-        data.pop_back();
-        data.push_back(_T(','));
-    }
 
     auto json_key_value = [](const tstring& key, const tstring& value) {
         tstring quotes = _T("\"");
@@ -113,14 +107,22 @@ void Logger::writeToJson() {
     tstring summary = json_key_value(_T("Summary"), mSummary);
     tstring message = json_key_value(_T("Message"), mMessage);
     tstring time = json_key_value(_T("Time"), mTime);
-    time.pop_back(); // Удалить последнюю запятую
+    time.pop_back();
 
-    tofstream output(logsFilePath);
+    tofstream output(logsFilePath, std::ios::app);
+
 #ifdef UNICODE
     output.imbue(std::locale(".UTF-8"));
 #endif // UNICODE
-    output << data << _T("\"Log\":{") << success << logLevel << source << summary << message << time << _T("}}");
-    output.close();
+
+    if (anyLogWritten == false) {
+        output << _T("{");
+    } else {
+        output << _T(",");
+    }
+
+    output << _T("\"Log\":{") << success << logLevel << source << summary << message << time << _T("}");
+    anyLogWritten = true;
 }
 
 LogLevel Logger::fromString(const tstring& logLevel) {

@@ -27,7 +27,7 @@ void FinishShaloon() {
     Logger::Log(true, _T("ShaloonLibrary::FinishShaloon()"), _T("Freeing all resources..."), tstring(), LogLevel::LOG_INFO);
     if (cryptoprovider) delete cryptoprovider;
     if (CertificateStorage::Instance) delete CertificateStorage::Instance;
-    if (Logger::Instance) delete Logger::Instance;
+    Logger::Dispose();
 }
 
 Certificate* GetFirstCertificate() {
