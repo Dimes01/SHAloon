@@ -162,3 +162,7 @@ bool GetLogSuccess() {
 void SetMinimalLogLevel(LPCTSTR logLevel) {
     Logger::SetMinimalLogLevel(logLevel);
 }
+
+void DeleteAllLogs() {
+    Logger::DeleteAllLogs();
+}

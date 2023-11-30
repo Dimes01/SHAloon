@@ -27,3 +27,4 @@ GetLogTime
 GetLogLevel
 GetLogSuccess
 SetMinimalLogLevel
+DeleteAllLogs

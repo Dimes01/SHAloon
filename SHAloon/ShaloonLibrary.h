@@ -44,4 +44,5 @@ extern "C" {
     SHALOONAPI bool GetLogSuccess();
 
     SHALOONAPI void SetMinimalLogLevel(LPCTSTR logLevel);
+    SHALOONAPI void DeleteAllLogs();
 }

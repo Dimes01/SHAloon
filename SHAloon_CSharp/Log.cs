@@ -22,5 +22,9 @@ public class Log {
     public static void SetMinimalLogLevel(string logLevel) {
         ImportsDLL.SetMinimalLogLevel(logLevel);
     }
+
+    public static void DeleteAllLogs() {
+        ImportsDLL.DeleteAllLogs();
+    }
 }
 

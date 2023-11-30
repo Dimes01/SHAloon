@@ -85,4 +85,7 @@ internal static class ImportsDLL {
 
     [DllImport(path_to_dll_cryptoprovider, CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
     internal static extern void SetMinimalLogLevel(string logLevel);
+
+    [DllImport(path_to_dll_cryptoprovider, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern void DeleteAllLogs();
 }
